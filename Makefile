@@ -12,7 +12,7 @@ INCLUDE	:= include
 LIB		:= lib
 OBJ 	:= obj
 
-LIBRARIES	:=
+LIBRARIES	:= 'websockets'
 
 ifeq ($(OS),Windows_NT)
 EXECUTABLE	:= fifoserver.exe
@@ -30,8 +30,8 @@ run: all
 	./$(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): 
-	$(CC) $(C_FLAGS) -I$(INCLUDE) -L$(LIB) $(SRC)/*.c -c $(LIBRARIES)
-	$(AS) $(AS_FLAGS) $(SRC)/*.s -c -o $(OBJ)/acode.o $(LIBRARIES)
+	$(CC) $(C_FLAGS) -I$(INCLUDE) -L$(LIB) $(SRC)/*.c -c
+	$(AS) $(AS_FLAGS) $(SRC)/*.s -c -o $(OBJ)/acode.o
 	$(MV) *.o $(OBJ)/
-	$(CC) $(OBJ)/*.o -o $(BIN)/$(EXECUTABLE) $(LIBRARIES)
+	$(CC) $(OBJ)/*.o -o $(BIN)/$(EXECUTABLE) -l$(LIBRARIES) -L/usr/local/lib
 	
