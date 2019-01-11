@@ -14,11 +14,7 @@ OBJ 	:= obj
 
 LIBRARIES	:= 'websockets'
 
-ifeq ($(OS),Windows_NT)
-EXECUTABLE	:= fifoserver.exe
-else
 EXECUTABLE	:= fifoserver
-endif
 
 all: $(BIN)/$(EXECUTABLE)
 
