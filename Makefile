@@ -1,7 +1,7 @@
 CC		 := gcc
-C_FLAGS  := -Wall -Wextra -g -pedantic -std=c99 -pthread -D_GNU_SOURCE
+C_FLAGS  := -Wall -Wextra -w -g -pedantic -std=c99 -pthread -D_GNU_SOURCE
 AS		 := as
-AS_FLAGS := -Wall -g
+AS_FLAGS := -g
 
 RM		 := rm
 MV 		 := mv
@@ -12,7 +12,7 @@ INCLUDE	:= include
 LIB		:= lib
 OBJ 	:= obj
 
-LIBRARIES	:= 'websockets'
+LIBRARIES	:= -lwebsockets -lpthread
 
 EXECUTABLE	:= fifoserver
 
@@ -29,5 +29,5 @@ $(BIN)/$(EXECUTABLE):
 	$(CC) $(C_FLAGS) -I$(INCLUDE) -L$(LIB) $(SRC)/*.c -c
 	$(AS) $(AS_FLAGS) $(SRC)/*.s -c -o $(OBJ)/acode.o
 	$(MV) *.o $(OBJ)/
-	$(CC) $(OBJ)/*.o -o $(BIN)/$(EXECUTABLE) -l$(LIBRARIES) -L/usr/local/lib
+	$(CC) $(OBJ)/*.o -fPIC -g -o $(BIN)/$(EXECUTABLE) $(LIBRARIES) -L/usr/local/lib
 	

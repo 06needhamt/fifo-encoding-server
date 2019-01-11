@@ -12,20 +12,20 @@ struct lws_protocols protocols[] =
         /* The first protocol must always be the HTTP handler */
         {
             "http-only",   /* name */
-            callback_http, /* callback */
+            server_callback_http, /* callback */
             0,             /* No per session data. */
             0,             /* max frame size / rx buffer */
         },
         {
             "example-protocol",
-            callback_example,
+            server_callback_websockets,
             0,
             EXAMPLE_RX_BUFFER_BYTES,
         },
         {NULL, NULL, 0, 0} /* terminator */
 };
 
-int callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
+int server_callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
 {
     switch (reason)
     {
@@ -39,7 +39,7 @@ int callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user,
     return 0;
 }
 
-int callback_example(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
+int server_callback_websockets(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
 {
     switch (reason)
     {
@@ -60,7 +60,7 @@ int callback_example(struct lws *wsi, enum lws_callback_reasons reason, void *us
     return 0;
 }
 
-int start_websocket_server(int argc, char *argv[])
+int start_websocket_server()
 {
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));

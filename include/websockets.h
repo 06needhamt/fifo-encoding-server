@@ -17,7 +17,7 @@ enum protocols_enum
     PROTOCOL_COUNT
 };
 
-int callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len);
-int callback_example(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len);
+int server_callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len);
+int server_callback_websockets(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len);
 
-int start_websocket_server(int argc, char *argv[]);
+int start_websocket_server();
