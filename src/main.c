@@ -8,11 +8,14 @@
 #include <guid.h>
 #include <queue.h>
 #include <queue_item.h>
+#include <io.h>
 
 guid_t guid;
 pthread_t tid[2];
 queue_t q;
 queue_item_t item; 
+
+FILE* file;
 
 void* start_server(void* ptr);
 void* start_client(void* ptr);
@@ -28,8 +31,35 @@ int main(int argc, char *argv[])
 	printf("Command = %s \n", item.command);
 	push_item(&q, &item);
 
-	queue_item_t* item2 = pop_item(&q);
-	printf("Command = %s \n", item2->command);
+	file = fopen("queue.json", "wb");
+
+	if(file == NULL)
+    {
+        printf("Error opening file \n");
+        exit(1);
+    }
+
+	write_queue(file, &q);
+
+	fclose(file);
+
+	memset(&q, 0, sizeof(queue_t));
+	memset(&item, 0, sizeof(queue_item_t));
+
+	file = fopen("queue.json", "rb");
+
+	if(file == NULL)
+    {
+        printf("Error opening file \n");
+        exit(1);
+    }
+
+	read_queue(file, &q);
+
+	fclose(file);
+	
+	pop_item(&q, &item);
+	printf("Command = %s \n", item.command);
 
 	err = pthread_create(&(tid[0]), NULL, &start_server, NULL);
 	if (err != 0) {

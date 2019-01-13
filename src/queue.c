@@ -11,21 +11,21 @@ void push_item(queue_t* q, queue_item_t* item){
         return;
     };
 
-    q->items[q->item_count++] = item;
+    q->items[q->item_count++] = *item;
 }
 
-queue_item_t* pop_item(queue_t* q){
+void pop_item(queue_t* q, queue_item_t* out){
     if(q->item_count == 0) {
         printf("[ERROR] Queue Empty \n");
-        return NULL;
+        out = NULL;
     }
 
-    return q->items[--q->item_count];
+    out = &q->items[--q->item_count];
 }
 
 void create_queue(queue_t* out, long capacity) {
     create_new_guid(&out->guid);
     out->capacity = capacity;
     out->item_count = 0L;
-    out->items = (queue_item_t**) malloc(capacity * sizeof(queue_item_t));
+    out->items = (queue_item_t*) malloc(capacity * sizeof(queue_item_t));
 }

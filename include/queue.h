@@ -10,9 +10,9 @@ typedef struct queue {
     guid_t guid;
     long item_count;
     long capacity;
-    queue_item_t** items;
+    queue_item_t* items;
 } queue_t;
 
 void push_item(queue_t* q, queue_item_t* item);
-queue_item_t* pop_item(queue_t* q);
+void pop_item(queue_t* q, queue_item_t* out);
 void create_queue(queue_t* out, long capacity);
