@@ -12,7 +12,7 @@ INCLUDE	:= include
 LIB		:= lib
 OBJ 	:= obj
 
-LIBRARIES	:= -lwebsockets -lpthread
+LIBRARIES	:= -lwebsockets -lpthread -L/usr/local/lib
 
 EXECUTABLE	:= fifoserver
 
@@ -29,5 +29,5 @@ $(BIN)/$(EXECUTABLE):
 	$(CC) $(C_FLAGS) -I$(INCLUDE) -L$(LIB) $(SRC)/*.c -c
 	$(AS) $(AS_FLAGS) $(SRC)/*.s -c -o $(OBJ)/acode.o
 	$(MV) *.o $(OBJ)/
-	$(CC) $(OBJ)/*.o -fPIC -g -o $(BIN)/$(EXECUTABLE) $(LIBRARIES) -L/usr/local/lib
+	$(CC) $(OBJ)/*.o -fPIC -g -o $(BIN)/$(EXECUTABLE) $(LIBRARIES) 
 	
