@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	printf("Guid = %s \n", guid.value);
 
 	create_queue(&q, 10L);
-	create_item("A", "B", "C", 0, &item);
+	create_item("A\0", "B\0", "C\0", 0, &item);
 	printf("Command = %s \n", item.command);
 	push_item(&q, &item);
 

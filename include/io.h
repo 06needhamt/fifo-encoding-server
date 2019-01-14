@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <jansson.h>
+
 #include <guid.h>
 #include <queue.h>
 #include <queue_item.h>

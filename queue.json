@@ -1,0 +1,15 @@
+{
+    "guid": "bf289eb8-ef48-d7d1-3a1a-13b4210d8aaa",
+    "item_count": 1,
+    "capacity": 10,
+    "items": [
+        {
+            "guid": "f28e79db-e7a1-4d8d-dfd4-9ef16544544a",
+            "command": "A",
+            "source": "B",
+            "dest": "C",
+            "item_type": 0,
+            "progress": 0
+        }
+    ]
+}

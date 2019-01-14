@@ -10,7 +10,7 @@ typedef struct queue_item {
     char* source;
     char* dest;
     int item_type;
-    int progess; 
+    int progress; 
     char* command;
 } queue_item_t;
 

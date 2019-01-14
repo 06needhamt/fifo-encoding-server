@@ -12,7 +12,7 @@ INCLUDE	:= include
 LIB		:= lib
 OBJ 	:= obj
 
-LIBRARIES	:= -lwebsockets -lpthread -L/usr/local/lib
+LIBRARIES	:= -lwebsockets -lpthread -ljansson -L/usr/local/lib
 
 EXECUTABLE	:= fifoserver
 

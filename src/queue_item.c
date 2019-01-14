@@ -17,5 +17,5 @@ void create_item(char* command, char* source, char* dest, int item_type, queue_i
     out->source = source;
     out->dest = dest;
     out->item_type = item_type;
-    out->progess = 0;
+    out->progress = 0;
 }
