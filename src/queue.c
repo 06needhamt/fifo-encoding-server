@@ -14,13 +14,12 @@ void push_item(queue_t* q, queue_item_t* item){
     q->items[q->item_count++] = *item;
 }
 
-void pop_item(queue_t* q, queue_item_t* out){
+queue_item_t pop_item(queue_t* q){
     if(q->item_count == 0) {
-        printf("[ERROR] Queue Empty \n");
-        out = NULL;
+        printf("[ERROR] Queue Empty \n");;
     }
 
-    out = &q->items[--q->item_count];
+    return q->items[--q->item_count];
 }
 
 void create_queue(queue_t* out, long capacity) {

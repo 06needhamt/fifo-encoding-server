@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	printf("Guid = %s \n", guid.value);
 
 	create_queue(&q, 10L);
-	create_item("A\0", "B\0", "C\0", 0, &item);
+	create_item("A\0", "B\0", "C\0", "test.mp4", 0, &item);
 	printf("Command = %s \n", item.command);
 	push_item(&q, &item);
 
@@ -58,7 +58,10 @@ int main(int argc, char *argv[])
 
 	fclose(file);
 	
-	pop_item(&q, &item);
+	item = pop_item(&q);
+	
+	//push_item(&q, NULL);
+	
 	printf("Command = %s \n", item.command);
 
 	err = pthread_create(&(tid[0]), NULL, &start_server, NULL);

@@ -9,6 +9,8 @@
 #include <queue.h>
 #include <queue_item.h>
 
+extern void* on_error(const char* error);
+
 int write_queue(FILE* file, queue_t* in);
 int read_queue(FILE* file, queue_t* out);
 
@@ -20,3 +22,4 @@ int read_queue_item(FILE* file, queue_item_t* out);
 
 int write_queue_items(FILE* file, unsigned count, queue_item_t* in[]);
 int read_queue_items(FILE* file, unsigned count, queue_item_t* out[]);
+
