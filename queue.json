@@ -1,0 +1,16 @@
+{
+    "guid": "d69b3457-c01f-1c9b-f605-3b4cbe9c03a3",
+    "item_count": 1,
+    "capacity": 10,
+    "items": [
+        {
+            "guid": "f9484f56-5ccc-ebd3-73f1-5936d284b9d1",
+            "command": "A",
+            "source": "B",
+            "dest": "C",
+            "file_name": "test.mp4",
+            "item_type": 0,
+            "progress": 0
+        }
+    ]
+}

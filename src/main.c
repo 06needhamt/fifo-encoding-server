@@ -125,6 +125,6 @@ int pre_start_tests() {
 	
 	printf("Command = %s \n", item.command);
 	
-	remove("queue.json");
+	//remove("queue.json");
 	return true;
 }

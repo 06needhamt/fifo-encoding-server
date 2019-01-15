@@ -8,11 +8,11 @@ MV 		 := mv
 
 BIN		:= bin
 SRC		:= src
-INCLUDE	:= include
-LIB		:= lib
+INCLUDE	:= -Iinclude
+LIB		:= -Llib
 OBJ 	:= obj
 
-LIBRARIES	:= -lwebsockets -lpthread -ljansson -L/usr/local/lib
+LIBRARIES	:= -lwebsockets -lpthread -ljansson -lavcodec -lavformat -lavfilter -lavutil -L/usr/local/lib
 
 EXECUTABLE	:= fifoserver
 
@@ -26,7 +26,7 @@ run: all
 	./$(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): 
-	$(CC) $(C_FLAGS) -I$(INCLUDE) -L$(LIB) $(SRC)/*.c -c
+	$(CC) $(C_FLAGS) $(INCLUDE) $(LIB) $(SRC)/*.c -c
 	$(AS) $(AS_FLAGS) $(SRC)/*.s -c -o $(OBJ)/acode.o
 	$(MV) *.o $(OBJ)/
 	$(CC) $(OBJ)/*.o -fPIC -g -o $(BIN)/$(EXECUTABLE) $(LIBRARIES) 
