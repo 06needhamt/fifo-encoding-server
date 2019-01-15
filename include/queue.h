@@ -14,5 +14,5 @@ typedef struct queue {
 } queue_t;
 
 void push_item(queue_t* q, queue_item_t* item);
-void pop_item(queue_t* q, queue_item_t* out);
+queue_item_t pop_item(queue_t* q);
 void create_queue(queue_t* out, long capacity);
