@@ -1,10 +1,3 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
-#include <libwebsockets.h>
-
 #include <websockets.h>
 
 struct lws_protocols protocols[] =

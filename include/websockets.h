@@ -1,5 +1,10 @@
 #pragma once
 
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
 #include <libwebsockets.h>
 
 #define EXAMPLE_RX_BUFFER_BYTES (10)
