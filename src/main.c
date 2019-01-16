@@ -53,7 +53,7 @@ void* start_server(void* ptr) {
 	printf("Starting Server... \n");
 	start_websocket_server();
 
-	return NULL;
+	return (void*) true;
 }
 
 void* start_main_thread(void* ptr) {
@@ -74,7 +74,7 @@ void* start_main_thread(void* ptr) {
 		printf("Server Thread created successfully \n");
 	}
 
-	return true;
+	return (void*) true;
 }
 
 int pre_start_tests() {
@@ -88,7 +88,7 @@ int pre_start_tests() {
 	printf("Guid = %s \n", guid.value);
 
 	create_queue(&q, 10L);
-	create_item("A\0", "B\0", "C\0", "test.mp4", 0, &item);
+	create_item("A", "B", "C", "input.mp4", "output.mp4", 0, &item);
 	printf("Command = %s \n", item.command);
 	push_item(&q, &item);
 
@@ -120,11 +120,11 @@ int pre_start_tests() {
 	fclose(file);
 	
 	item = pop_item(&q);
-	
-	//push_item(&q, NULL);
-	
+
 	printf("Command = %s \n", item.command);
-	
-	//remove("queue.json");
+	remove("queue.json");
+
+	// transcode_video(item.input_file_name, item.output_file_name);
+
 	return true;
 }

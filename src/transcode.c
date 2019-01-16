@@ -1,31 +1,15 @@
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavfilter/buffersink.h>
-#include <libavfilter/buffersrc.h>
-#include <libavutil/opt.h>
-#include <libavutil/pixdesc.h>
+#include <transcode.h>
 
-static AVFormatContext *ifmt_ctx;
-static AVFormatContext *ofmt_ctx;
-typedef struct FilteringContext {
-    AVFilterContext *buffersink_ctx;
-    AVFilterContext *buffersrc_ctx;
-    AVFilterGraph *filter_graph;
-} FilteringContext;
-static FilteringContext *filter_ctx;
-
-typedef struct StreamContext {
-    AVCodecContext *dec_ctx;
-    AVCodecContext *enc_ctx;
-} StreamContext;
-static StreamContext *stream_ctx;
-
-static int open_input_file(const char *filename)
+int open_input_file(const char *filename)
 {
     int ret;
     unsigned int i;
 
-    ifmt_ctx = NULL;
+    ifmt_ctx = avformat_alloc_context();
+    
+    av_register_all();
+    avcodec_register_all();
+
     if ((ret = avformat_open_input(&ifmt_ctx, filename, NULL, NULL)) < 0) {
         av_log(NULL, AV_LOG_ERROR, "Cannot open input file\n");
         return ret;
@@ -78,7 +62,7 @@ static int open_input_file(const char *filename)
     return 0;
 }
 
-static int open_output_file(const char *filename)
+int open_output_file(const char *filename)
 {
     AVStream *out_stream;
     AVStream *in_stream;
@@ -193,7 +177,7 @@ static int open_output_file(const char *filename)
     return 0;
 }
 
-static int init_filter(FilteringContext* fctx, AVCodecContext *dec_ctx,
+int init_filter(FilteringContext* fctx, AVCodecContext *dec_ctx,
         AVCodecContext *enc_ctx, const char *filter_spec)
 {
     char args[512];
@@ -202,6 +186,9 @@ static int init_filter(FilteringContext* fctx, AVCodecContext *dec_ctx,
     const AVFilter *buffersink = NULL;
     AVFilterContext *buffersrc_ctx = NULL;
     AVFilterContext *buffersink_ctx = NULL;
+    
+    avfilter_register_all();
+
     AVFilterInOut *outputs = avfilter_inout_alloc();
     AVFilterInOut *inputs  = avfilter_inout_alloc();
     AVFilterGraph *filter_graph = avfilter_graph_alloc();
@@ -342,7 +329,7 @@ end:
     return ret;
 }
 
-static int init_filters(void)
+int init_filters(void)
 {
     const char *filter_spec;
     unsigned int i;
@@ -372,7 +359,7 @@ static int init_filters(void)
     return 0;
 }
 
-static int encode_write_frame(AVFrame *filt_frame, unsigned int stream_index, int *got_frame) {
+int encode_write_frame(AVFrame *filt_frame, unsigned int stream_index, int *got_frame) {
     int ret;
     int got_frame_local;
     AVPacket enc_pkt;
@@ -383,7 +370,7 @@ static int encode_write_frame(AVFrame *filt_frame, unsigned int stream_index, in
     if (!got_frame)
         got_frame = &got_frame_local;
 
-    av_log(NULL, AV_LOG_INFO, "Encoding frame\n");
+    // av_log(NULL, AV_LOG_INFO, "Encoding frame\n");
     /* encode filtered frame */
     enc_pkt.data = NULL;
     enc_pkt.size = 0;
@@ -408,12 +395,12 @@ static int encode_write_frame(AVFrame *filt_frame, unsigned int stream_index, in
     return ret;
 }
 
-static int filter_encode_write_frame(AVFrame *frame, unsigned int stream_index)
+int filter_encode_write_frame(AVFrame *frame, unsigned int stream_index)
 {
     int ret;
     AVFrame *filt_frame;
 
-    av_log(NULL, AV_LOG_INFO, "Pushing decoded frame to filters\n");
+    // av_log(NULL, AV_LOG_INFO, "Pushing decoded frame to filters\n");
     /* push the decoded frame into the filtergraph */
     ret = av_buffersrc_add_frame_flags(filter_ctx[stream_index].buffersrc_ctx,
             frame, 0);
@@ -429,7 +416,7 @@ static int filter_encode_write_frame(AVFrame *frame, unsigned int stream_index)
             ret = AVERROR(ENOMEM);
             break;
         }
-        av_log(NULL, AV_LOG_INFO, "Pulling filtered frame from filters\n");
+        // av_log(NULL, AV_LOG_INFO, "Pulling filtered frame from filters\n");
         ret = av_buffersink_get_frame(filter_ctx[stream_index].buffersink_ctx,
                 filt_frame);
         if (ret < 0) {
@@ -452,7 +439,7 @@ static int filter_encode_write_frame(AVFrame *frame, unsigned int stream_index)
     return ret;
 }
 
-static int flush_encoder(unsigned int stream_index)
+int flush_encoder(unsigned int stream_index)
 {
     int ret;
     int got_frame;
@@ -462,7 +449,7 @@ static int flush_encoder(unsigned int stream_index)
         return 0;
 
     while (1) {
-        av_log(NULL, AV_LOG_INFO, "Flushing stream #%u encoder\n", stream_index);
+        // av_log(NULL, AV_LOG_INFO, "Flushing stream #%u encoder\n", stream_index);
         ret = encode_write_frame(NULL, stream_index, &got_frame);
         if (ret < 0)
             break;
@@ -472,7 +459,7 @@ static int flush_encoder(unsigned int stream_index)
     return ret;
 }
 
-int transcode_video(int argc, char* argv[])
+int transcode_video(char* input_file, char* outputFile)
 {
     int ret;
     AVPacket packet = { .data = NULL, .size = 0 };
@@ -483,14 +470,9 @@ int transcode_video(int argc, char* argv[])
     int got_frame;
     int (*dec_func)(AVCodecContext *, AVFrame *, int *, const AVPacket *);
 
-    if (argc != 3) {
-        av_log(NULL, AV_LOG_ERROR, "Usage: %s <input file> <output file>\n", argv[0]);
-        return 1;
-    }
-
-    if ((ret = open_input_file(argv[1])) < 0)
+    if ((ret = open_input_file(input_file)) < 0)
         goto end;
-    if ((ret = open_output_file(argv[2])) < 0)
+    if ((ret = open_output_file(outputFile)) < 0)
         goto end;
     if ((ret = init_filters()) < 0)
         goto end;

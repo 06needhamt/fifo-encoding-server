@@ -5,6 +5,7 @@ AS_FLAGS := -g
 
 RM		 := rm
 MV 		 := mv
+CP		 := cp
 
 BIN		:= bin
 SRC		:= src
@@ -19,8 +20,8 @@ EXECUTABLE	:= fifoserver
 all: $(BIN)/$(EXECUTABLE)
 
 clean:
-	-$(RM) $(BIN)/$(EXECUTABLE)
-	-$(RM) $(OBJ)/*
+	-$(RM) -rf $(BIN)/$(EXECUTABLE)
+	-$(RM) -rf $(OBJ)/*
 
 run: all
 	./$(BIN)/$(EXECUTABLE)
@@ -30,4 +31,5 @@ $(BIN)/$(EXECUTABLE):
 	$(AS) $(AS_FLAGS) $(SRC)/*.s -c -o $(OBJ)/acode.o
 	$(MV) *.o $(OBJ)/
 	$(CC) $(OBJ)/*.o -fPIC -g -o $(BIN)/$(EXECUTABLE) $(LIBRARIES) 
+	$(CP) $(BIN)/$(EXECUTABLE) /usr/bin/
 	

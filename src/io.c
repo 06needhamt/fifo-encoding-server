@@ -17,7 +17,8 @@ int write_queue(FILE* file, queue_t* in) {
         err = json_object_set(item_object, "command", json_string(in->items[i].command));
         err = json_object_set(item_object, "source", json_string(in->items[i].source));
         err = json_object_set(item_object, "dest", json_string(in->items[i].dest));
-        err = json_object_set(item_object, "file_name", json_string(in->items[i].file_name));
+        err = json_object_set(item_object, "input_file_name", json_string(in->items[i].input_file_name));
+        err = json_object_set(item_object, "output_file_name", json_string(in->items[i].output_file_name));
         err = json_object_set(item_object, "item_type", json_integer(in->items[i].item_type));
         err = json_object_set(item_object, "progress", json_integer(in->items[i].progress));
 
@@ -46,7 +47,8 @@ int read_queue(FILE* file, queue_t* out) {
        item->command = json_string_value(json_object_get(item_object, "command"));
        item->source = json_string_value(json_object_get(item_object, "source"));
        item->dest = json_string_value(json_object_get(item_object, "dest"));
-       item->file_name = json_string_value(json_object_get(item_object, "file_name"));
+       item->input_file_name = json_string_value(json_object_get(item_object, "input_file_name"));
+       item->output_file_name = json_string_value(json_object_get(item_object, "output_file_name"));
        item->item_type = (int) json_number_value(json_object_get(item_object, "item_type"));
        item->progress = (int) json_number_value(json_object_get(item_object, "progress"));
        out->items[i] = *item;
