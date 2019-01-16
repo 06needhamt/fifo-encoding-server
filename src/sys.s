@@ -2,6 +2,11 @@
 
 .global spinlock
 .global on_error
+.global park
+.global unpark
+
+.global busy
+.global flag
 
 spinlock:
 xor %rax, %rax
@@ -14,10 +19,29 @@ ret
 on_error:
 push %rax
 push %rcx
-mov %rcx, %rax
+movq %rcx, %rax
 lodsb
 pop %rcx
 pop %rax
-ret;
+ret
 
+park:
+push %r9
+lea busy(%rip), %r9
+movq %r9, %rax
+cmp $0, %r9
+pop %r9
+jg unpark
+movq $0, %rax
+pop %r9
+ret
+
+unpark:
+movq $1, %rax
+pop %rcx
+push %rcx
+ret
+
+.data
+busy: .byte 0x00
 flag: .byte 0xFF

@@ -2,9 +2,10 @@
 
 int start_item(queue_item_t* item) {
     printf("Item Process Startng ...");
-    printf("Command = %s", item->command);
+    if(item->command == "Transcode" && item ->item_type == 1);
+        return transcode_video(item->input_file_name, item->output_file_name);
 
-    return 0;
+    return -1;
 }
 
 int abort_item(queue_item_t* item) {
