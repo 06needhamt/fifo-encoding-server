@@ -5,11 +5,13 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include <globals.h>
 #include <websockets.h>
 #include <guid.h>
 #include <queue.h>
 #include <queue_item.h>
 #include <io.h>
+#include <threads.h>
 
 pthread_t tid[2];
 int err = 1;
@@ -18,6 +20,10 @@ void* start_server(void* ptr);
 void* start_main_thread(void* ptr);
 int pre_start_tests(void);
 int live_test(void);
+int create_and_allocate_thread_pool(void);
+int create_and_allocate_queue(void);
+int create_and_open_files(const char* directory, const char* log_path, const char* data_path);
+int cleanup_memory(void);
 
 void* main_status;
 void* server_status;
@@ -39,6 +45,9 @@ int main(int argc, char *argv[])
 	pthread_join(tid[0], NULL);
 	pthread_join(tid[1], NULL);
 
+	if(!cleanup_memory())
+		return (void*) false;
+	
 	int status = (*(int*) server_status) & *((int*) main_status); 
 
 	free(server_status);
@@ -62,9 +71,21 @@ void* start_main_thread(void* ptr) {
 	printf("Running Pre Start Tests \n");
 
 	if(!pre_start_tests())
-		return false;
+		return (void*) false;
 
 	printf("Pre Start Tests Passed! \n");
+
+	if(!create_and_allocate_thread_pool())
+		return (void*) false;
+
+	if(!create_and_allocate_queue())
+		return (void*) false;
+
+	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
+		return (void*) false;
+
+	if(!live_test())
+		return (void*) false;
 
 	err = pthread_create(&(tid[1]), NULL, &start_server, NULL);
 	if (err != 0) {
@@ -75,9 +96,6 @@ void* start_main_thread(void* ptr) {
 		printf("Server Thread created successfully \n");
 	}
 
-	if(!live_test())
-		return (void*) false;
-	
 	return (void*) true;
 }
 
@@ -126,7 +144,7 @@ int pre_start_tests() {
 	fclose(file);
 
 	memset(&q, 0, sizeof(queue_t));
-	memset(&item, 0, sizeof(queue_item_t));
+	memset(&item, 0, sizeof(queue_t));
 
 	file = fopen("queue.json", "rb");
 
@@ -147,4 +165,33 @@ int pre_start_tests() {
 
 	return true;
 }
-    //get_nprocs_conf(), get_nprocs());
+
+int create_and_allocate_thread_pool() {
+	MAX_THREADS = get_nprocs() - 3;
+	pool = (thread_pool_t*) malloc(sizeof(thread_pool_t));
+
+	create_thread_pool(MAX_THREADS, &pool);
+	return true;
+}
+
+int create_and_allocate_queue() {
+	current_queue = (queue_t*) malloc(sizeof(queue_t));
+	create_queue(current_queue, QUEUE_CAPACITY);
+	return true;
+}
+
+int create_and_open_files(const char* directory, const char* log_path, const char* data_path){
+
+}
+
+int cleanup_memory() {
+	write_queue(data_file, current_queue);
+
+	fclose(log_file);
+	fclose(data_file);
+
+	free(current_queue);
+	destroy_thread_pool(pool);
+
+	return true;
+}

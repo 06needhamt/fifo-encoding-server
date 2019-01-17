@@ -29,10 +29,13 @@ park:
 push %r9
 lea busy(%rip), %r9
 movq %r9, %rax
-cmp $0, %r9
+cmp $0xFF, %r9
 pop %r9
+je halt
+cmp $0, %r9
 jg unpark
 movq $0, %rax
+movq $0, busy(%rip)
 pop %r9
 ret
 
@@ -41,6 +44,10 @@ movq $1, %rax
 pop %rcx
 push %rcx
 ret
+
+halt:
+cli
+hlt
 
 .data
 busy: .byte 0x00
