@@ -24,6 +24,7 @@ typedef struct thread_pool {
 extern char busy;
 extern int park();
 extern int unpark();
+extern void* poll_thread();
 
 int create_thread_pool(int count, thread_pool_t* out);
 int create_thread(queue_item_t* item, thread_t* out, thread_pool_t* pool);

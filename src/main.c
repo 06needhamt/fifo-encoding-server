@@ -84,9 +84,6 @@ void* start_main_thread(void* ptr) {
 	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
 		return (void*) false;
 
-	if(!live_test())
-		return (void*) false;
-
 	err = pthread_create(&(tid[1]), NULL, &start_server, NULL);
 	if (err != 0) {
 		printf("\n can't create thread :[%s] \n", strerror(err));
@@ -95,6 +92,9 @@ void* start_main_thread(void* ptr) {
 	else {
 		printf("Server Thread created successfully \n");
 	}
+
+	//if(!live_test())
+	//	return (void*) false;
 
 	return (void*) true;
 }
@@ -167,7 +167,7 @@ int pre_start_tests() {
 }
 
 int create_and_allocate_thread_pool() {
-	MAX_THREADS = get_nprocs() - 3;
+	MAX_THREADS = get_nprocs();
 	pool = (thread_pool_t*) malloc(sizeof(thread_pool_t));
 
 	create_thread_pool(MAX_THREADS, &pool);
@@ -227,7 +227,7 @@ int cleanup_memory() {
 	fclose(log_file);
 	fclose(data_file);
 
-	//free(current_queue);
+	free(current_queue);
 	destroy_thread_pool(pool);
 
 	return true;

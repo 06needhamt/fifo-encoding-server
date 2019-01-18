@@ -15,7 +15,13 @@
 
 static thread_pool_t* pool = NULL;
 static queue_t* current_queue = NULL;
+
+static queue_item_t current_item = {0};
+
 static FILE* log_file = NULL;
 static FILE* data_file = NULL;
 
 static int MAX_THREADS;
+
+void* poll_thread();
+

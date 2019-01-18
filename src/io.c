@@ -31,8 +31,13 @@ int write_queue(FILE* file, queue_t* in) {
 
 int read_queue(FILE* file, queue_t* out) {
     json_error_t* err = malloc(sizeof(json_error_t)); 
-    json_t* root = json_loadf(file, 0, err);
-
+    fseek(file, 0, SEEK_END); 
+    long json_size = ftell(file); 
+    fseek(file, 0, SEEK_SET); 
+    const char* json = (const char*) malloc(sizeof(char) * json_size);
+    fread(json, sizeof(char), json_size, file);
+    json_t* root = json_loads(json, 0, err);
+    
     create_guid(json_string_value(json_object_get(root, "guid")), &out->guid);
     out->item_count = (long) json_number_value(json_object_get(root, "item_count"));
     out->capacity = (long) json_number_value(json_object_get(root, "capacity"));
@@ -61,7 +66,7 @@ int write_queues(FILE* file, unsigned count, queue_t* in[]) {
 }
 
 int read_queues(FILE* file, unsigned count, queue_t* out[]) {
-    return fread(out, sizeof(queue_t), count, file);
+    return 1; //fread(out, sizeof(queue_t), count, file);
 }
 
 int write_queue_item(FILE* file, queue_item_t* in) {
@@ -69,7 +74,7 @@ int write_queue_item(FILE* file, queue_item_t* in) {
 }
 
 int read_queue_item(FILE* file, queue_item_t* out) {
-    return fread(out, sizeof(queue_item_t), 1, file);
+    return 1; //fread(out, sizeof(queue_item_t), 1, file);
 }
 
 int write_queue_items(FILE* file, unsigned count, queue_item_t* in[]) {
@@ -77,5 +82,5 @@ int write_queue_items(FILE* file, unsigned count, queue_item_t* in[]) {
 }
 
 int read_queue_items(FILE* file, unsigned count, queue_item_t* out[]) {
-    return fread(out, sizeof(queue_item_t), count, file);
+    return 1; //fread(out, sizeof(queue_item_t), count, file);
 }

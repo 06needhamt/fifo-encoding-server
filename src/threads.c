@@ -8,7 +8,7 @@ int create_thread_pool(int count, thread_pool_t* out) {
     out->busy_count = 0;
 
     for(int i = 0; i < count; i++) {
-        int err = pthread_create(&(out->pool[i].handle), NULL, &park, NULL);
+        int err = pthread_create(&(out->pool[i].handle), NULL, &poll_thread, NULL);
         if (err != 0) {
 		    printf("can't create thread :[%s] \n", strerror(err));
 		    return 0;
@@ -26,7 +26,7 @@ int destroy_thread_pool(thread_pool_t* in) {
     busy = 0xFF;
     for(int i = 0; i < in->thread_count; i++) {
         pthread_join(in->pool[i].handle, NULL);
-        //free(in->pool[i].handle);
+        free(in->pool[i].handle);
     }
-    //free(in);
+    free(in);
 }
