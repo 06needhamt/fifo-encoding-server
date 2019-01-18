@@ -45,6 +45,7 @@ push %rcx
 ret
 
 halt:
+emms
 cli
 hlt
 
