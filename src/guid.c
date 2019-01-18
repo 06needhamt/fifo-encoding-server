@@ -7,7 +7,7 @@ void create_guid(char guid[], guid_t* out)
 {
     int i = 0;
     
-    while(guid[i] != '\0'){
+    while(i < 36){
         if(i == 8 || i == 13 || i == 18 || i == 23)
             out->value[i] = '-';
         else

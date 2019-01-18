@@ -26,7 +26,7 @@ int destroy_thread_pool(thread_pool_t* in) {
     busy = 0xFF;
     for(int i = 0; i < in->thread_count; i++) {
         pthread_join(in->pool[i].handle, NULL);
-        free(in->pool[i].handle);
+        //free(in->pool[i].handle);
     }
-    free(in);
+    //free(in);
 }

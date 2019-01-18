@@ -25,13 +25,13 @@ int write_queue(FILE* file, queue_t* in) {
         err = json_array_append(items_array, item_object);
     }
     err = json_object_set(root, "items", items_array);
-    err = json_dumpf(root, file, JSON_INDENT(4));
+    err = json_dumpf(root, file, 0);
     return err;
 }
 
 int read_queue(FILE* file, queue_t* out) {
     json_error_t* err = malloc(sizeof(json_error_t)); 
-    json_t* root = json_loadf(file, JSON_INDENT(4), err);
+    json_t* root = json_loadf(file, 0, err);
 
     create_guid(json_string_value(json_object_get(root, "guid")), &out->guid);
     out->item_count = (long) json_number_value(json_object_get(root, "item_count"));

@@ -144,7 +144,7 @@ int pre_start_tests() {
 	fclose(file);
 
 	memset(&q, 0, sizeof(queue_t));
-	memset(&item, 0, sizeof(queue_t));
+	memset(&item, 0, sizeof(queue_item_t));
 
 	file = fopen("queue.json", "rb");
 
@@ -181,16 +181,53 @@ int create_and_allocate_queue() {
 }
 
 int create_and_open_files(const char* directory, const char* log_path, const char* data_path){
+	struct stat st = {0};
+	char l_path[255];
+	char d_path[255];
+	
+	if (stat(directory, &st) == -1) {
+    	mkdir(directory, 0755);
+	}
 
+	strcpy(l_path, directory);
+	strcat(l_path, log_path);
+	printf("log_path %s \n", l_path);
+
+	log_file = fopen(l_path, "wb");
+
+	strcpy(d_path, directory);
+	strcat(d_path, data_path);
+	printf("data_path %s \n", d_path);
+
+	data_file = fopen(d_path, "rb");
+	
+	if(data_file) {
+		long size = 0L;
+		fseek (data_file, 0, SEEK_END);
+		size = ftell(data_file);
+
+		if (size == 0) {
+			printf("Data file is empty \n");
+		}
+		else {
+			read_queue(data_file, current_queue);
+		}
+		fclose(data_file);
+	}
+
+	data_file = fopen(d_path, "wb");
+
+	return true;
 }
 
 int cleanup_memory() {
+	printf("Cleanup Memory Called \n");
 	write_queue(data_file, current_queue);
 
 	fclose(log_file);
 	fclose(data_file);
 
-	free(current_queue);
+	//free(current_queue);
 	destroy_thread_pool(pool);
 
 	return true;
