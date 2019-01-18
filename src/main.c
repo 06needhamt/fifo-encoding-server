@@ -16,6 +16,14 @@
 pthread_t tid[2];
 int err = 1;
 
+ thread_pool_t* pool = NULL;
+ queue_t* current_queue = NULL;
+
+ queue_item_t current_item = {0};
+
+ FILE* log_file = NULL;
+ FILE* data_file = NULL;
+
 void* start_server(void* ptr);
 void* start_main_thread(void* ptr);
 int pre_start_tests(void);
@@ -84,6 +92,9 @@ void* start_main_thread(void* ptr) {
 	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
 		return (void*) false;
 
+	if(!live_test())
+		return (void*) false;
+	
 	err = pthread_create(&(tid[1]), NULL, &start_server, NULL);
 	if (err != 0) {
 		printf("\n can't create thread :[%s] \n", strerror(err));
@@ -93,25 +104,14 @@ void* start_main_thread(void* ptr) {
 		printf("Server Thread created successfully \n");
 	}
 
-	//if(!live_test())
-	//	return (void*) false;
-
 	return (void*) true;
 }
 
 int live_test() {
-	queue_t q;
 	queue_item_t item;
 
-	create_queue(&q, 10L);
 	create_item("Transcode", "Source", "Destination", "input.mp4", "output.mp4", 1, &item);
-
-	push_item(&q, &item);
-	memset(&item, 0, sizeof(item));
-	item = pop_item(&q);
-
-	if(!start_item(&item))
-		return false;
+	push_item(current_queue, &item);
 
 	return true;
 }
@@ -170,7 +170,7 @@ int create_and_allocate_thread_pool() {
 	MAX_THREADS = get_nprocs();
 	pool = (thread_pool_t*) malloc(sizeof(thread_pool_t));
 
-	create_thread_pool(MAX_THREADS, &pool);
+	create_thread_pool(MAX_THREADS, pool);
 	return true;
 }
 

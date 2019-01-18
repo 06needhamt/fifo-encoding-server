@@ -36,7 +36,6 @@ cmp $0, %r9
 jg unpark
 movq $0, %rax
 movq $0, busy(%rip)
-pop %r9
 ret
 
 unpark:

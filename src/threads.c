@@ -20,6 +20,7 @@ int create_thread_pool(int count, thread_pool_t* out) {
         create_new_guid(&out->pool[i].id);
         out->pool[i].item = (queue_item_t*) malloc(sizeof(queue_item_t));
     }
+    return 1;
 }
 
 int destroy_thread_pool(thread_pool_t* in) {
@@ -29,4 +30,5 @@ int destroy_thread_pool(thread_pool_t* in) {
         free(in->pool[i].handle);
     }
     free(in);
+    return 1;
 }

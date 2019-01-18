@@ -1,8 +1,9 @@
 #include <queue_item.h>
+#include <transcode.h>
 
 int start_item(queue_item_t* item) {
     printf("Item Process Startng ... \n ");
-    if(item->command == "Transcode" && item ->item_type == 1);
+    if(strcmp(item->command, "Transcode") == 0 && item ->item_type == 1)
         return transcode_video(item->input_file_name, item->output_file_name);
 
     return -1;

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include <sys/sysinfo.h>
 
 #include <guid.h>
@@ -13,15 +14,10 @@
 #include <threads.h>
 #include <io.h>
 
-static thread_pool_t* pool = NULL;
-static queue_t* current_queue = NULL;
+extern queue_t* current_queue;
+extern queue_item_t current_item; 
 
-static queue_item_t current_item = {0};
-
-static FILE* log_file = NULL;
-static FILE* data_file = NULL;
-
-static int MAX_THREADS;
+int MAX_THREADS;
 
 void* poll_thread();
 
