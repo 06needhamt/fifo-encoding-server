@@ -12,17 +12,18 @@
 #include <queue_item.h>
 #include <io.h>
 #include <threads.h>
+#include <log.h>
 
 pthread_t tid[2];
 int err = 1;
 
- thread_pool_t* pool = NULL;
- queue_t* current_queue = NULL;
+thread_pool_t* pool = NULL;
+queue_t* current_queue = NULL;
 
- queue_item_t current_item = {0};
+queue_item_t current_item = {0};
 
- FILE* log_file = NULL;
- FILE* data_file = NULL;
+FILE* log_file = NULL;
+FILE* data_file = NULL;
 
 void* start_server(void* ptr);
 void* start_main_thread(void* ptr);
