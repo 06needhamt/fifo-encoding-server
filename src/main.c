@@ -12,7 +12,6 @@
 #include <queue_item.h>
 #include <io.h>
 #include <threads.h>
-#include <log.h>
 
 pthread_t tid[2];
 int err = 1;
