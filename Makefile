@@ -13,7 +13,7 @@ INCLUDE	:= -Iinclude
 LIB		:= -Llib
 OBJ 	:= obj
 
-LIBRARIES	:= -lwebsockets -lpthread -ljansson -lavcodec -lavformat -lavfilter -lavutil -L/usr/local/lib
+LIBRARIES	:= -lwebsockets -lpthread -ljansson -lavcodec -lavformat -lavfilter -lavutil -L/usr/local/lib -Ldeps/libwebsockets/build/lib/
 
 EXECUTABLE	:= fifoserver
 

@@ -5,6 +5,9 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>   
+
 #include <globals.h>
 #include <websockets.h>
 #include <guid.h>
