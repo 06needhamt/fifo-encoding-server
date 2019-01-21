@@ -19,5 +19,5 @@ extern queue_item_t current_item;
 
 int MAX_THREADS;
 
-void* poll_thread();
+void* poll_thread(int tid);
 
