@@ -6,17 +6,18 @@
 #include <unistd.h>
 
 #include <sys/types.h>
-#include <sys/stat.h>   
+#include <sys/stat.h>
 
 #include <globals.h>
 #include <websockets.h>
+#include <httpd.h>
 #include <guid.h>
 #include <queue.h>
 #include <queue_item.h>
 #include <io.h>
 #include <threads.h>
 
-pthread_t tid[2];
+pthread_t tid[3];
 int err = 1;
 
 thread_pool_t* pool = NULL;
@@ -27,8 +28,10 @@ queue_item_t current_item = {0};
 FILE* log_file = NULL;
 FILE* data_file = NULL;
 
-void* start_server(void* ptr);
+void* start_libwebsocket_server(void* ptr);
+void* start_httpd_server(void* ptr);
 void* start_main_thread(void* ptr);
+
 int pre_start_tests(void);
 int live_test(void);
 int create_and_allocate_thread_pool(void);
@@ -70,9 +73,16 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
-void* start_server(void* ptr) {
-	printf("Starting Server... \n");
+void* start_libwebsocket_server(void* ptr) {
+	printf("Starting Websocket Server... \n");
 	start_websocket_server();
+
+	return (void*) true;
+}
+
+void* start_httpd_server(void* ptr) {
+	printf("Starting HTTP Server... \n");
+	start_http_server();
 
 	return (void*) true;
 }
@@ -98,13 +108,22 @@ void* start_main_thread(void* ptr) {
 	if(!live_test())
 		return (void*) false;
 	
-	err = pthread_create(&(tid[1]), NULL, &start_server, NULL);
+	err = pthread_create(&(tid[1]), NULL, &start_libwebsocket_server, NULL);
 	if (err != 0) {
 		printf("\n can't create thread :[%s] \n", strerror(err));
-		exit(1);
+		exit(2);
 	}
 	else {
-		printf("Server Thread created successfully \n");
+		printf("Websocket Server Thread created successfully \n");
+	}
+
+	err = pthread_create(&(tid[2]), NULL, &start_httpd_server, NULL);
+	if (err != 0) {
+		printf("\n can't create thread :[%s] \n", strerror(err));
+		exit(3);
+	}
+	else {
+		printf("HTTP Server Thread created successfully \n");
 	}
 
 	return (void*) true;
@@ -137,10 +156,10 @@ int pre_start_tests() {
 	file = fopen("queue.json", "wb");
 
 	if(file == NULL)
-    {
-        printf("Error opening file \n");
-        exit(1);
-    }
+	{
+		printf("Error opening file \n");
+		exit(1);
+	}
 
 	write_queue(file, &q);
 
@@ -152,10 +171,10 @@ int pre_start_tests() {
 	file = fopen("queue.json", "rb");
 
 	if(file == NULL)
-    {
-        printf("Error opening file \n");
-        exit(1);
-    }
+	{
+		printf("Error opening file \n");
+		exit(1);
+	}
 
 	read_queue(file, &q);
 
@@ -189,7 +208,7 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 	char d_path[255];
 	
 	if (stat(directory, &st) == -1) {
-    	mkdir(directory, 0755);
+		mkdir(directory, 0755);
 	}
 
 	strcpy(l_path, directory);
