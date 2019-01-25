@@ -1,6 +1,6 @@
 #! /bin/bash
 
-CORES="$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')"
+CORES="$(cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l)"
 WORKING_DIR="$(pwd)"
 
 sudo apt-get update -qq && sudo apt-get -y install \
