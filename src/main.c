@@ -105,8 +105,8 @@ void* start_main_thread(void* ptr) {
 	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
 		return (void*) false;
 
-	if(!live_test())
-		return (void*) false;
+	// if(!live_test())
+	// 	return (void*) false;
 	
 	err = pthread_create(&(tid[1]), NULL, &start_libwebsocket_server, NULL);
 	if (err != 0) {
