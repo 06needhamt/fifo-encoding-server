@@ -8,7 +8,7 @@ int create_thread_pool(int count, thread_pool_t* out) {
     out->busy_count = 0;
 
     for(int i = 0; i < count; i++) {
-        int err = pthread_create(&(out->pool[i].handle), NULL, &poll_thread, &i);
+        int err = pthread_create(&(out->pool[i].handle), NULL, &poll_thread, i);
         if (err != 0) {
 		    printf("can't create thread :[%s] \n", strerror(err));
 		    return 0;
