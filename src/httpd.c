@@ -105,8 +105,9 @@ static int iterate_post (void* coninfo_cls, enum MHD_ValueKind kind, const char*
 			snprintf(answerstring, MAXANSWERSIZE, greetingpage, data);
 			con_info->answerstring = answerstring;
 		}
-	  else
-		con_info->answerstring = NULL;
+		else {
+			con_info->answerstring = NULL;
+		}
 
 		return MHD_NO;
 	}

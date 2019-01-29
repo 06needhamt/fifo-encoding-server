@@ -1,4 +1,5 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 
 #define QUEUE_CAPACITY 100
 

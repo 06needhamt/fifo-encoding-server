@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	pthread_join(tid[1], NULL);
 
 	if(!cleanup_memory())
-		return (void*) false;
+		return EXIT_FAILURE;
 	
 	int status = (*(int*) server_status) & *((int*) main_status); 
 
