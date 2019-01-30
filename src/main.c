@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <curl/curl.h>
+
 #include <globals.h>
 #include <websockets.h>
 #include <httpd.h>
@@ -244,6 +246,8 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 
 int cleanup_memory() {
 	printf("Cleanup Memory Called \n");
+	
+	curl_global_cleanup();
 	write_queue(data_file, current_queue);
 
 	fclose(log_file);

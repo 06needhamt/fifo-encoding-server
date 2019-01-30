@@ -88,31 +88,56 @@ static void request_completed(void* cls, struct MHD_Connection* connection,
 	*con_cls = NULL;
 }
 
-static int iterate_post (void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
+static int iterate_post_test(void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
 				const char* filename, const char* content_type,
 				const char* transfer_encoding, const char* data, uint64_t off, size_t size) {
 
 	connection_info_t* con_info = coninfo_cls;
 
 	if (strcmp(key, "name") == 0) {
-		if ((size > 0) && (size <= MAXNAMESIZE))
+		if ((size > 0) && (size <= MAXBODYSIZE))
 		{
-			char* answerstring;
-			answerstring = malloc(MAXANSWERSIZE);
-			if (!answerstring)
+			char* body;
+			body = malloc(MAXRESPONSESIZE);
+			if (!body)
 				return MHD_NO;
 
-			snprintf(answerstring, MAXANSWERSIZE, greetingpage, data);
-			con_info->answerstring = answerstring;
+			snprintf(body, MAXRESPONSESIZE, greetingpage, data);
+			con_info->answerstring = body;
 		}
 		else {
 			con_info->answerstring = NULL;
 		}
-
 		return MHD_NO;
 	}
+	return MHD_YES;
+}
 
-return MHD_YES;
+static int iterate_post(void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
+				const char* filename, const char* content_type,
+				const char* transfer_encoding, const char* data, uint64_t off, size_t size) {
+	
+	connection_info_t* con_info = coninfo_cls;
+
+	if ((size > 0) && (size <= MAXBODYSIZE))
+	{
+		char* body;
+		body = malloc(MAXRESPONSESIZE);
+		if (!body)
+			return MHD_NO;
+
+		snprintf(body, MAXRESPONSESIZE, greetingpage, data);
+		con_info->answerstring = body;
+		parse_http_request_body(con_info->answerstring, item);
+		push_item(current_queue, item);
+		free(body);
+	}
+	else {
+		con_info->answerstring = NULL;
+		printf("NULL Request Ignored");
+	}
+	
+	return MHD_YES;
 }
 
 int start_http_server()
@@ -131,4 +156,28 @@ int start_http_server()
 	MHD_stop_daemon(daemon);
 
 	return EXIT_SUCCESS;
+}
+
+int send_http_request(http_request_mode_t mode, const char* url, http_request_t* payload) {
+	CURLcode res = CURLE_OK;
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+
+	curl_easy_setopt(curl, CURLOPT_URL,  payload->url);
+	if(mode == POST) {
+		struct curl_slist *headers = NULL;
+		headers = curl_slist_append(headers, "Accept: application/json");
+		headers = curl_slist_append(headers, "Content-Type: application/json");
+		headers = curl_slist_append(headers, "charsets: utf-8");
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload->request_body);
+	}
+
+	res = curl_easy_perform(curl);
+	/* Check for errors */ 
+	if(res != CURLE_OK)
+		fprintf(stderr, "curl_easy_perform() failed: %s\n",
+				curl_easy_strerror(res));
+	    curl_easy_cleanup(curl);
+
+    return 1;
 }
