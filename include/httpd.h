@@ -8,7 +8,6 @@
 #include <stdlib.h>
 
 #include <microhttpd.h>
-#include <curl/curl.h>
 
 #include <globals.h>
 #include <http_request.h>
@@ -32,7 +31,6 @@ static const char* greetingpage = "<html><body><h1>Welcome, %s!</center></h1></b
 
 static const char* errorpage = "<html><body>This doesn't seem to be right.</body></html>";
 
-static CURL* curl;
 static queue_item_t* item;
 
 typedef struct connection_info
@@ -44,10 +42,6 @@ typedef struct connection_info
 
 static int send_page(struct MHD_Connection* connection, const char* page);
 
-static int iterate_post_test(void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
-				const char* filename, const char* content_type,
-				const char* transfer_encoding, const char* data, uint64_t off, size_t size);
-				
 static int iterate_post(void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
 				const char* filename, const char* content_type,
 				const char* transfer_encoding, const char* data, uint64_t off, size_t size);
@@ -61,5 +55,3 @@ static int answer_to_connection (void* cls, struct MHD_Connection* connection,
 				size_t* upload_data_size, void** con_cls);
 
 int start_http_server();
-
-int send_http_request(http_request_mode_t mode, const char* url, http_request_t* payload);
