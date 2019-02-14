@@ -8,8 +8,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <curl/curl.h>
-
 #include <globals.h>
 #include <websockets.h>
 #include <httpd.h>
