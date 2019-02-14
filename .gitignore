@@ -4,6 +4,5 @@
 /obj
 /deps
 /data
-*.mp4
 .gdb_history
 peda-session-fifoserver.*
