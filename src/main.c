@@ -251,6 +251,8 @@ int cleanup_memory() {
 	fclose(data_file);
 
 	free(current_queue);
+	free(current_body);
+	
 	destroy_thread_pool(pool);
 
 	return true;

@@ -18,6 +18,7 @@
 
 extern queue_t* current_queue;
 extern queue_item_t current_item; 
+char* current_body;
 
 int MAX_THREADS;
 

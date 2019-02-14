@@ -48,8 +48,13 @@ static int answer_to_connection(void* cls, struct MHD_Connection* connection, co
 		con_info->answerstring = malloc(*upload_data_size);
 		strcpy(con_info->answerstring, upload_data);
 		
-		if (con_info->answerstring != NULL)
+		if (con_info->answerstring != NULL) {
+			if(item == NULL)
+				item = malloc(sizeof(queue_item_t));
+			parse_http_request_body(con_info->answerstring, *upload_data_size, item);
+			push_item(current_queue, item);
 			return send_page(connection, con_info->answerstring);
+		}
 	}
 
 	return send_page(connection, errorpage);
@@ -82,8 +87,6 @@ static int iterate_post(void* coninfo_cls, enum MHD_ValueKind kind, const char* 
 
 		snprintf(body, MAXRESPONSESIZE, greetingpage, data);
 		con_info->answerstring = body;
-		parse_http_request_body(con_info->answerstring, item);
-		push_item(current_queue, item);
 		free(body);
 	}
 	else {

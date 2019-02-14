@@ -20,6 +20,23 @@ int create_http_request(const http_request_header_t* request_headers, const char
     return 1;
 }
 
-int parse_http_request_body(const char* body, queue_item_t* out) {
+int parse_http_request_body(const char* body, size_t body_size, queue_item_t* out) {
+    if(current_body == NULL)
+        current_body = malloc(body_size);
+    else
+        realloc(current_body, body_size);
     
+    memcpy(current_body, body, body_size);
+    json_error_t error;
+    json_t* json = json_loadb(current_body, body_size, 0, &error);
+
+    create_guid(json_string_value(json_object_get(json, "guid")), &out->guid);
+    out->command = json_string_value(json_object_get(json, "command"));
+    out->source = json_string_value(json_object_get(json, "source"));
+    out->dest = json_string_value(json_object_get(json, "dest"));
+    out->input_file_name = json_string_value(json_object_get(json, "input_file_name"));
+    out->output_file_name = json_string_value(json_object_get(json, "output_file_name"));
+    out->item_type = (int) json_number_value(json_object_get(json, "item_type"));
+    // out->progress = (int) json_number_value(json_object_get(json, "progress"));
+    return 1;
 }

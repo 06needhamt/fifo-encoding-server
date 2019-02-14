@@ -39,4 +39,4 @@ int create_http_request_header(const char* header, const char* value, http_reque
 int create_http_request(const http_request_header_t* request_headers, const char* url, http_request_type_t request_type,
 			size_t header_count, const char* request_body, size_t body_length, const char* origin, http_request_t* out);
 int send_http_request(http_request_mode_t mode, const char* url, http_request_t* payload);
-int parse_http_request_body(const char* body, queue_item_t* out);
+int parse_http_request_body(const char* body, size_t body_size, queue_item_t* out);
