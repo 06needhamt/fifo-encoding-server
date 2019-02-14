@@ -27,15 +27,6 @@ static int answer_to_connection(void* cls, struct MHD_Connection* connection, co
 
 		if (strcmp(method, "POST") == 0)
 		{
-			con_info->postprocessor =
-				MHD_create_post_processor(connection, POSTBUFFERSIZE, iterate_post, (void*)con_info);
-
-			if (NULL == con_info->postprocessor)
-			{
-				free(con_info);
-				return MHD_NO;
-			}
-
 			con_info->connectiontype = POST;
 		}
 		else
@@ -54,16 +45,16 @@ static int answer_to_connection(void* cls, struct MHD_Connection* connection, co
 	if (strcmp(method, "POST") == 0)
 	{
 		connection_info_t* con_info = *con_cls;
-
-		if (*upload_data_size != 0)
-		{
-			MHD_post_process(con_info->postprocessor, upload_data, *upload_data_size);
-			*upload_data_size = 0;
-
-			return MHD_YES;
-		}
-		else if (con_info->answerstring != NULL)
+		con_info->answerstring = malloc(*upload_data_size);
+		strcpy(con_info->answerstring, upload_data);
+		
+		if (con_info->answerstring != NULL) {
+			if(item == NULL)
+				item = malloc(sizeof(queue_item_t));
+			parse_http_request_body(con_info->answerstring, *upload_data_size, item);
+			push_item(current_queue, item);
 			return send_page(connection, con_info->answerstring);
+		}
 	}
 
 	return send_page(connection, errorpage);
@@ -77,41 +68,33 @@ static void request_completed(void* cls, struct MHD_Connection* connection,
 	if (con_info == NULL)
 		return;
 
-	if (con_info->connectiontype == POST)
-	{
-		MHD_destroy_post_processor(con_info->postprocessor);
-		if (con_info->answerstring)
-			free(con_info->answerstring);
-	}
-
 	free(con_info);
 	*con_cls = NULL;
 }
 
-static int iterate_post (void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
+static int iterate_post(void* coninfo_cls, enum MHD_ValueKind kind, const char* key,
 				const char* filename, const char* content_type,
 				const char* transfer_encoding, const char* data, uint64_t off, size_t size) {
-
+	
 	connection_info_t* con_info = coninfo_cls;
 
-	if (strcmp(key, "name") == 0) {
-		if ((size > 0) && (size <= MAXNAMESIZE))
-		{
-			char* answerstring;
-			answerstring = malloc(MAXANSWERSIZE);
-			if (!answerstring)
-				return MHD_NO;
+	if ((size > 0) && (size <= MAXBODYSIZE))
+	{
+		char* body;
+		body = malloc(MAXRESPONSESIZE);
+		if (!body)
+			return MHD_NO;
 
-			snprintf(answerstring, MAXANSWERSIZE, greetingpage, data);
-			con_info->answerstring = answerstring;
-		}
-	  else
-		con_info->answerstring = NULL;
-
-		return MHD_NO;
+		snprintf(body, MAXRESPONSESIZE, greetingpage, data);
+		con_info->answerstring = body;
+		free(body);
 	}
-
-return MHD_YES;
+	else {
+		con_info->answerstring = NULL;
+		printf("NULL Request Ignored");
+	}
+	
+	return MHD_YES;
 }
 
 int start_http_server()

@@ -24,10 +24,10 @@ int create_thread_pool(int count, thread_pool_t* out) {
 }
 
 int destroy_thread_pool(thread_pool_t* in) {
-    busy = 0xFF;
+    busy = (char) 0xFF;
     for(int i = 0; i < in->thread_count; i++) {
         pthread_join(in->pool[i].handle, NULL);
-        free(in->pool[i].handle);
+        free((void*) (in->pool[i].handle));
     }
     free(in);
     return 1;

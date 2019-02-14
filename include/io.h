@@ -5,6 +5,7 @@
 
 #include <jansson.h>
 
+#include <globals.h>
 #include <guid.h>
 #include <queue.h>
 #include <queue_item.h>

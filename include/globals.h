@@ -1,10 +1,12 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 
 #define QUEUE_CAPACITY 100
 
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <sys/time.h>
 #include <sys/sysinfo.h>
 
@@ -16,6 +18,7 @@
 
 extern queue_t* current_queue;
 extern queue_item_t current_item; 
+char* current_body;
 
 int MAX_THREADS;
 

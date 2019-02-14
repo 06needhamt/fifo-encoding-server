@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	pthread_join(tid[1], NULL);
 
 	if(!cleanup_memory())
-		return (void*) false;
+		return EXIT_FAILURE;
 	
 	int status = (*(int*) server_status) & *((int*) main_status); 
 
@@ -105,8 +105,8 @@ void* start_main_thread(void* ptr) {
 	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
 		return (void*) false;
 
-	if(!live_test())
-		return (void*) false;
+	// if(!live_test())
+	// 	return (void*) false;
 	
 	err = pthread_create(&(tid[1]), NULL, &start_libwebsocket_server, NULL);
 	if (err != 0) {
@@ -244,12 +244,15 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 
 int cleanup_memory() {
 	printf("Cleanup Memory Called \n");
+	
 	write_queue(data_file, current_queue);
 
 	fclose(log_file);
 	fclose(data_file);
 
 	free(current_queue);
+	free(current_body);
+	
 	destroy_thread_pool(pool);
 
 	return true;
