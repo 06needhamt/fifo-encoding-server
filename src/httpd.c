@@ -51,6 +51,9 @@ static int answer_to_connection(void* cls, struct MHD_Connection* connection, co
 		if (con_info->answerstring != NULL) {
 			if(item == NULL)
 				item = malloc(sizeof(queue_item_t));
+			else
+				memset(item, 0x00, sizeof(queue_item_t));
+			
 			parse_http_request_body(con_info->answerstring, *upload_data_size, item);
 			push_item(current_queue, item);
 			return send_page(connection, con_info->answerstring);

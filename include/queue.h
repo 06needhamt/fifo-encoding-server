@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <guid.h>
 #include <queue_item.h>
@@ -15,4 +16,6 @@ typedef struct queue {
 
 void push_item(queue_t* q, queue_item_t* item);
 queue_item_t pop_item(queue_t* q);
+void push_item_temp(queue_t* q, queue_item_t* item);
+queue_item_t pop_item_temp(queue_t* q);
 void create_queue(queue_t* out, long capacity);

@@ -89,6 +89,10 @@ void* start_httpd_server(void* ptr) {
 
 void* start_main_thread(void* ptr) {
 	printf("Starting Main Thread... \n");
+
+	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
+		return (void*) false;
+
 	printf("Running Pre Start Tests \n");
 
 	if(!pre_start_tests())
@@ -100,9 +104,6 @@ void* start_main_thread(void* ptr) {
 		return (void*) false;
 
 	if(!create_and_allocate_queue())
-		return (void*) false;
-
-	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
 		return (void*) false;
 
 	// if(!live_test())
@@ -133,7 +134,7 @@ int live_test() {
 	queue_item_t item;
 
 	create_item("Transcode", "Source", "Destination", "input.mp4", "output.mp4", 1, &item);
-	push_item(current_queue, &item);
+	push_item_temp(current_queue, &item);
 
 	return true;
 }
@@ -151,7 +152,7 @@ int pre_start_tests() {
 	create_queue(&q, 10L);
 	create_item("A", "B", "C", "input.mp4", "output.mp4", 0, &item);
 	printf("Command = %s \n", item.command);
-	push_item(&q, &item);
+	push_item_temp(&q, &item);
 
 	file = fopen("queue.json", "wb");
 
@@ -180,7 +181,7 @@ int pre_start_tests() {
 
 	fclose(file);
 	
-	item = pop_item(&q);
+	item = pop_item_temp(&q);
 
 	printf("Command = %s \n", item.command);
 	remove("queue.json");
@@ -197,7 +198,7 @@ int create_and_allocate_thread_pool() {
 }
 
 int create_and_allocate_queue() {
-	current_queue = (queue_t*) malloc(sizeof(queue_t));
+	current_queue = (queue_t*) malloc(sizeof(queue_t) + sizeof(queue_item_t) * QUEUE_CAPACITY);
 	create_queue(current_queue, QUEUE_CAPACITY);
 	return true;
 }
@@ -206,6 +207,9 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 	struct stat st = {0};
 	char l_path[255];
 	char d_path[255];
+
+	log_file_path = malloc(255);
+	data_file_path = malloc(255);
 	
 	if (stat(directory, &st) == -1) {
 		mkdir(directory, 0755);
@@ -215,11 +219,15 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 	strcat(l_path, log_path);
 	printf("log_path %s \n", l_path);
 
+	strcpy(log_file_path, l_path);
+
 	log_file = fopen(l_path, "wb");
 
 	strcpy(d_path, directory);
 	strcat(d_path, data_path);
 	printf("data_path %s \n", d_path);
+
+	strcpy(data_file_path, d_path);
 
 	data_file = fopen(d_path, "rb");
 	
@@ -253,6 +261,9 @@ int cleanup_memory() {
 	free(current_queue);
 	free(current_body);
 	
+	free(log_file_path);
+	free(data_file_path);
+
 	destroy_thread_pool(pool);
 
 	return true;
