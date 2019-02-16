@@ -7,13 +7,13 @@
 
 typedef struct queue_item {
     guid_t guid;
+    char* command;
     char* source;
     char* dest;
     char* input_file_name;
     char* output_file_name;
     int item_type;
     int progress; 
-    char* command;
 } queue_item_t;
 
 int start_item(queue_item_t* item);

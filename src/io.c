@@ -147,17 +147,74 @@ int read_queues(FILE* file, char* file_name, unsigned count, queue_t* out[]) {
 }
 
 int write_queue_item(FILE* file, char* file_name, queue_item_t* in) {
-    return 1;
+    int err;
+    json_t* root = json_object();
+
+	err = json_object_set(root, "guid", json_string(in->guid.value));
+    err = json_object_set(root, "command", json_string(in->command));
+    err = json_object_set(root, "source", json_string(in->source));
+    err = json_object_set(root, "dest", json_string(in->dest));
+    err = json_object_set(root, "input_file_name", json_string(in->input_file_name));
+    err = json_object_set(root, "output_file_name", json_string(in->output_file_name));
+    err = json_object_set(root, "item_type", json_integer(in->item_type));
+    err = json_object_set(root, "progress", json_integer(in->progress));
+
+	fclose(file);
+	file = fopen(file_name, "w");
+    err = json_dumpf(root, file, JSON_INDENT(4));
+	fflush(file);
+	
+	return err;
 }
 
 int read_queue_item(FILE* file, char* file_name, queue_item_t* out) {
-    return 1; //fread(out, sizeof(queue_item_t), 1, file);
+	json_error_t* err = malloc(sizeof(json_error_t)); 
+    fseek(file, 0, SEEK_END); 
+    long json_size = ftell(file); 
+    fseek(file, 0, SEEK_SET); 
+    const char* json = (const char*) malloc(sizeof(char) * json_size);
+    fread(json, sizeof(char), json_size, file);
+    json_t* root = json_loads(json, 0, err);
+
+    create_guid(json_string_value(json_object_get(root, "guid")), &out->guid);
+    out->command = json_string_value(json_object_get(root, "command"));
+    out->source = json_string_value(json_object_get(root, "source"));
+    out->dest = json_string_value(json_object_get(root, "dest"));
+    out->input_file_name = json_string_value(json_object_get(root, "input_file_name"));
+    out->output_file_name = json_string_value(json_object_get(root, "output_file_name"));
+    out->item_type = (int) json_number_value(json_object_get(root, "item_type"));
+    out->progress = (int) json_number_value(json_object_get(root, "progress"));
+    return err;
 }
 
 int write_queue_items(FILE* file, char* file_name, unsigned count, queue_item_t* in[]) {
-    return 1;
+    int err;
+    json_t* root = json_object();
+	json_t* items_array = json_array();
+
+	for(unsigned i = 0; i < count; i++) {
+		json_t* item_object = json_object();
+		err = json_object_set(item_object, "guid", json_string(in[i]->guid.value));
+		err = json_object_set(item_object, "command", json_string(in[i]->command));
+		err = json_object_set(item_object, "source", json_string(in[i]->source));
+		err = json_object_set(item_object, "dest", json_string(in[i]->dest));
+		err = json_object_set(item_object, "input_file_name", json_string(in[i]->input_file_name));
+		err = json_object_set(item_object, "output_file_name", json_string(in[i]->output_file_name));
+		err = json_object_set(item_object, "item_type", json_integer(in[i]->item_type));
+		err = json_object_set(item_object, "progress", json_integer(in[i]->progress));
+
+		err = json_array_append(items_array, item_object);
+	}
+	err = json_object_set(root, "items", items_array);
+	
+	fclose(file);
+	file = fopen(file_name, "w");
+    err = json_dumpf(root, file, JSON_INDENT(4));
+	fflush(file);
+	
+	return err;
 }
 
 int read_queue_items(FILE* file, char* file_name, unsigned count, queue_item_t* out[]) {
-    return 1; //fread(out, sizeof(queue_item_t), count, file);
+    return 1;
 }
