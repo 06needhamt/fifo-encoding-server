@@ -14,9 +14,6 @@ void push_item(queue_t* q, queue_item_t* item){
     };
 
     q->items[q->item_count++] = *item;
-    truncate(data_file_path, 0);
-    
-    write_queue(data_file, q);
 }
 
 queue_item_t pop_item(queue_t* q){
@@ -25,6 +22,7 @@ queue_item_t pop_item(queue_t* q){
     }
     q->item_count--;
     printf("Item Count %ld \n", q->item_count);
+
     return q->items[q->item_count];
 }
 
@@ -43,6 +41,7 @@ queue_item_t pop_item_temp(queue_t* q){
     }
     q->item_count--;
     printf("Item Count %ld \n", q->item_count);
+	
     return q->items[q->item_count];
 }
 

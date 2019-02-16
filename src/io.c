@@ -25,7 +25,11 @@ int write_queue(FILE* file, queue_t* in) {
         err = json_array_append(items_array, item_object);
     }
     err = json_object_set(root, "items", items_array);
+	
+	fclose(file);
+	file = fopen(data_file_path, "w");
     err = json_dumpf(root, file, JSON_INDENT(4));
+	fflush(file);
     return err;
 }
 

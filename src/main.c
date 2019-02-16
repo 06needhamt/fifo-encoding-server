@@ -198,7 +198,7 @@ int create_and_allocate_thread_pool() {
 }
 
 int create_and_allocate_queue() {
-	current_queue = (queue_t*) malloc(sizeof(queue_t) + sizeof(queue_item_t) * QUEUE_CAPACITY);
+	current_queue = (queue_t*) malloc(sizeof(queue_t));
 	create_queue(current_queue, QUEUE_CAPACITY);
 	return true;
 }
