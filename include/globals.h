@@ -18,6 +18,12 @@
 
 extern queue_t* current_queue;
 extern queue_item_t current_item; 
+
+extern FILE* log_file;
+extern FILE* data_file;
+
+char* data_file_path;
+char* log_file_path;
 char* current_body;
 
 int MAX_THREADS;
