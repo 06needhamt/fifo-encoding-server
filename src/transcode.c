@@ -560,14 +560,13 @@ end:
                 avfilter_graph_free(&filter_ctx[i].filter_graph);
         }
         avformat_close_input(&ifmt_ctx);
-    }
     
-    av_free(filter_ctx);
-    av_free(stream_ctx);
-    if (ofmt_ctx && !(ofmt_ctx->oformat->flags & AVFMT_NOFILE))
-        avio_closep(&ofmt_ctx->pb);
-    avformat_free_context(ofmt_ctx);
-    
+		av_free(filter_ctx);
+		av_free(stream_ctx);
+		if (ofmt_ctx && !(ofmt_ctx->oformat->flags & AVFMT_NOFILE))
+			avio_closep(&ofmt_ctx->pb);
+		avformat_free_context(ofmt_ctx);
+	}
 
     if (ret < 0)
         av_log(NULL, AV_LOG_ERROR, "Error occurred: %s\n", av_err2str(ret));

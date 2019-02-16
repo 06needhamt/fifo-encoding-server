@@ -162,7 +162,7 @@ int pre_start_tests() {
 		exit(1);
 	}
 
-	write_queue(file, &q);
+	write_queue(file, "queue.json", &q);
 
 	fclose(file);
 
@@ -177,7 +177,7 @@ int pre_start_tests() {
 		exit(1);
 	}
 
-	read_queue(file, &q);
+	read_queue(file, "queue.json", &q);
 
 	fclose(file);
 	
@@ -240,7 +240,10 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 			printf("Data file is empty \n");
 		}
 		else {
-			read_queue(data_file, current_queue);
+			if(current_queue == NULL)
+				current_queue = malloc(sizeof(queue_t));
+			
+			read_queue(data_file, data_file_path, current_queue);
 		}
 		fclose(data_file);
 	}
@@ -253,7 +256,7 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 int cleanup_memory() {
 	printf("Cleanup Memory Called \n");
 	
-	write_queue(data_file, current_queue);
+	write_queue(data_file, data_file_path, current_queue);
 
 	fclose(log_file);
 	fclose(data_file);

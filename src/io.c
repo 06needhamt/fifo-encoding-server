@@ -1,7 +1,7 @@
 #include <io.h>
 
 
-int write_queue(FILE* file, queue_t* in) {
+int write_queue(FILE* file, char* file_name, queue_t* in) {
     int err;
     json_t* root = json_object();
     json_t* items_array = json_array();
@@ -27,13 +27,13 @@ int write_queue(FILE* file, queue_t* in) {
     err = json_object_set(root, "items", items_array);
 	
 	fclose(file);
-	file = fopen(data_file_path, "w");
+	file = fopen(file_name, "w");
     err = json_dumpf(root, file, JSON_INDENT(4));
 	fflush(file);
     return err;
 }
 
-int read_queue(FILE* file, queue_t* out) {
+int read_queue(FILE* file, char* file_name, queue_t* out) {
     json_error_t* err = malloc(sizeof(json_error_t)); 
     fseek(file, 0, SEEK_END); 
     long json_size = ftell(file); 
@@ -65,26 +65,26 @@ int read_queue(FILE* file, queue_t* out) {
     return 0;
 }
 
-int write_queues(FILE* file, unsigned count, queue_t* in[]) {
+int write_queues(FILE* file, char* file_name, unsigned count, queue_t* in[]) {
     return 1;
 }
 
-int read_queues(FILE* file, unsigned count, queue_t* out[]) {
+int read_queues(FILE* file, char* file_name, unsigned count, queue_t* out[]) {
     return 1; //fread(out, sizeof(queue_t), count, file);
 }
 
-int write_queue_item(FILE* file, queue_item_t* in) {
+int write_queue_item(FILE* file, char* file_name, queue_item_t* in) {
     return 1;
 }
 
-int read_queue_item(FILE* file, queue_item_t* out) {
+int read_queue_item(FILE* file, char* file_name, queue_item_t* out) {
     return 1; //fread(out, sizeof(queue_item_t), 1, file);
 }
 
-int write_queue_items(FILE* file, unsigned count, queue_item_t* in[]) {
+int write_queue_items(FILE* file, char* file_name, unsigned count, queue_item_t* in[]) {
     return 1;
 }
 
-int read_queue_items(FILE* file, unsigned count, queue_item_t* out[]) {
+int read_queue_items(FILE* file, char* file_name, unsigned count, queue_item_t* out[]) {
     return 1; //fread(out, sizeof(queue_item_t), count, file);
 }
