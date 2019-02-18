@@ -18,6 +18,7 @@
 
 extern queue_t* current_queue;
 extern queue_item_t current_item; 
+extern thread_pool_t* current_pool;
 
 extern FILE* log_file;
 extern FILE* data_file;

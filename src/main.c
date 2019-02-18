@@ -20,7 +20,7 @@
 pthread_t tid[3];
 int err = 1;
 
-thread_pool_t* pool = NULL;
+thread_pool_t* current_pool = NULL;
 queue_t* current_queue = NULL;
 
 queue_item_t current_item = {0};
@@ -191,9 +191,9 @@ int pre_start_tests() {
 
 int create_and_allocate_thread_pool() {
 	MAX_THREADS = get_nprocs();
-	pool = (thread_pool_t*) malloc(sizeof(thread_pool_t));
+	current_pool = (thread_pool_t*) malloc(sizeof(thread_pool_t));
 
-	create_thread_pool(MAX_THREADS, pool);
+	create_thread_pool(MAX_THREADS, current_pool);
 	return true;
 }
 
@@ -267,7 +267,7 @@ int cleanup_memory() {
 	free(log_file_path);
 	free(data_file_path);
 
-	destroy_thread_pool(pool);
+	destroy_thread_pool(current_pool);
 
 	return true;
 }
