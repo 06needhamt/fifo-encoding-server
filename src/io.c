@@ -38,8 +38,8 @@ int read_queue(FILE* file, char* file_name, queue_t* out) {
     fseek(file, 0, SEEK_END); 
     long json_size = ftell(file); 
     fseek(file, 0, SEEK_SET); 
-    const char* json = (const char*) malloc(sizeof(char) * json_size);
-    fread(json, sizeof(char), json_size, file);
+    const char* json = (const char*) malloc(sizeof(char) * (json_size + 1));
+    fread(json, sizeof(char), json_size + 1, file);
     json_t* root = json_loads(json, 0, err);
     
     create_guid(json_string_value(json_object_get(root, "guid")), &out->guid);
@@ -110,11 +110,11 @@ int read_queues(FILE* file, char* file_name, unsigned count, queue_t* out[]) {
     fseek(file, 0, SEEK_END); 
     long json_size = ftell(file); 
     fseek(file, 0, SEEK_SET); 
-    const char* json = (const char*) malloc(sizeof(char) * json_size);
-    fread(json, sizeof(char), json_size, file);
+    const char* json = (const char*) malloc(sizeof(char) * (json_size + 1));
+    fread(json, sizeof(char), json_size + 1, file);
 
     json_t* root = json_loads(json, 0, err);
-	json_t* queues_array = json_array_get(root, "queues");
+	json_t* queues_array = json_object_get(root, "queues");
 
 	for(long i = 0; i < json_array_size(queues_array); i++) {
 		json_t* queue_object = json_array_get(queues_array, i);
@@ -172,8 +172,8 @@ int read_queue_item(FILE* file, char* file_name, queue_item_t* out) {
     fseek(file, 0, SEEK_END); 
     long json_size = ftell(file); 
     fseek(file, 0, SEEK_SET); 
-    const char* json = (const char*) malloc(sizeof(char) * json_size);
-    fread(json, sizeof(char), json_size, file);
+    const char* json = (const char*) malloc(sizeof(char) * (json_size + 1));
+    fread(json, sizeof(char), json_size + 1, file);
     json_t* root = json_loads(json, 0, err);
 
     create_guid(json_string_value(json_object_get(root, "guid")), &out->guid);
@@ -216,5 +216,26 @@ int write_queue_items(FILE* file, char* file_name, unsigned count, queue_item_t*
 }
 
 int read_queue_items(FILE* file, char* file_name, unsigned count, queue_item_t* out[]) {
-    return 1;
+   	json_error_t* err = malloc(sizeof(json_error_t)); 
+    fseek(file, 0, SEEK_END); 
+    long json_size = ftell(file); 
+    fseek(file, 0, SEEK_SET); 
+    const char* json = (const char*) malloc(sizeof(char) * (json_size + 1));
+    fread(json, sizeof(char), json_size + 1, file);
+
+    json_t* root = json_loads(json, 0, err);
+    json_t* items_array = json_object_get(root, "items");
+
+    for(unsigned i = 0; i < json_array_size(items_array); i++) {
+        json_t* item_object = json_array_get(items_array, i);
+        create_guid(json_string_value(json_object_get(item_object, "guid")), &out[i]->guid);
+        out[i]->command = json_string_value(json_object_get(item_object, "command"));
+        out[i]->source = json_string_value(json_object_get(item_object, "source"));
+        out[i]->dest = json_string_value(json_object_get(item_object, "dest"));
+        out[i]->input_file_name = json_string_value(json_object_get(item_object, "input_file_name"));
+        out[i]->output_file_name = json_string_value(json_object_get(item_object, "output_file_name"));
+        out[i]->item_type = (int) json_number_value(json_object_get(item_object, "item_type"));
+        out[i]->progress = (int) json_number_value(json_object_get(item_object, "progress"));
+    }
+    return err;
 }
