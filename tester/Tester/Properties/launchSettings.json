@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Tester": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\GitHub\\fifo-encoding-server\\testfiles"
+    }
+  }
+}

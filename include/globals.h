@@ -25,7 +25,6 @@ extern FILE* data_file;
 
 char* data_file_path;
 char* log_file_path;
-char* current_body;
 
 int MAX_THREADS;
 
