@@ -262,7 +262,6 @@ int cleanup_memory() {
 	fclose(data_file);
 
 	free(current_queue);
-	free(current_body);
 	
 	free(log_file_path);
 	free(data_file_path);

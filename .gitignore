@@ -4,5 +4,6 @@
 /obj
 /deps
 /data
+/testfiles
 .gdb_history
 peda-session-fifoserver.*
