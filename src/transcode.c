@@ -56,6 +56,7 @@ int open_input_file(const char *filename)
             }
         }
         stream_ctx[i].dec_ctx = codec_ctx;
+		stream_ctx[i].dec_ctx->thread_count = 1; // Force the decoder to only use one thread
     }
 
     av_dump_format(ifmt_ctx, 0, filename, 0);
@@ -103,6 +104,8 @@ int open_output_file(const char *filename)
                 return AVERROR(ENOMEM);
             }
 
+			enc_ctx->thread_count = 1; // Force The Encoder to only use one thread
+			
             /* In this example, we transcode to same properties (picture size,
              * sample rate etc.). These properties can be changed for output
              * streams easily using filters */
