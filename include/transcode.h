@@ -1,5 +1,7 @@
+#pragma once
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+#include <pthread.h>
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavfilter/buffersink.h>
@@ -24,6 +26,9 @@ typedef struct StreamContext {
 } StreamContext;
 
  StreamContext *stream_ctx;
+
+ static enum AVCodecID enc_video_codec_id = AV_CODEC_ID_H264;
+ static enum AVCodecID enc_audio_codec_id = AV_CODEC_ID_AAC;
 
  int open_input_file(const char *filename);
  int open_output_file(const char *filename);

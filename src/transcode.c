@@ -90,10 +90,9 @@ int open_output_file(const char *filename)
         in_stream = ifmt_ctx->streams[i];
         dec_ctx = stream_ctx[i].dec_ctx;
 
-        if (dec_ctx->codec_type == AVMEDIA_TYPE_VIDEO
-                || dec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
-            /* in this example, we choose transcoding to same codec */
-            encoder = avcodec_find_encoder(dec_ctx->codec_id);
+        if (dec_ctx->codec_type == AVMEDIA_TYPE_VIDEO) {
+
+            encoder = avcodec_find_encoder(enc_video_codec_id);
             if (!encoder) {
                 av_log(NULL, AV_LOG_FATAL, "Necessary encoder not found\n");
                 return AVERROR_INVALIDDATA;
@@ -106,28 +105,16 @@ int open_output_file(const char *filename)
 
 			enc_ctx->thread_count = 1; // Force The Encoder to only use one thread
 			
-            /* In this example, we transcode to same properties (picture size,
-             * sample rate etc.). These properties can be changed for output
-             * streams easily using filters */
-            if (dec_ctx->codec_type == AVMEDIA_TYPE_VIDEO) {
-                enc_ctx->height = dec_ctx->height;
-                enc_ctx->width = dec_ctx->width;
-                enc_ctx->sample_aspect_ratio = dec_ctx->sample_aspect_ratio;
-                /* take first format from list of supported formats */
-                if (encoder->pix_fmts)
-                    enc_ctx->pix_fmt = encoder->pix_fmts[0];
-                else
-                    enc_ctx->pix_fmt = dec_ctx->pix_fmt;
-                /* video time_base can be set to whatever is handy and supported by encoder */
-                enc_ctx->time_base = av_inv_q(dec_ctx->framerate);
-            } else {
-                enc_ctx->sample_rate = dec_ctx->sample_rate;
-                enc_ctx->channel_layout = dec_ctx->channel_layout;
-                enc_ctx->channels = av_get_channel_layout_nb_channels(enc_ctx->channel_layout);
-                /* take first format from list of supported formats */
-                enc_ctx->sample_fmt = encoder->sample_fmts[0];
-                enc_ctx->time_base = (AVRational){1, enc_ctx->sample_rate};
-            }
+			enc_ctx->height = dec_ctx->height;
+			enc_ctx->width = dec_ctx->width;
+			enc_ctx->sample_aspect_ratio = dec_ctx->sample_aspect_ratio;
+			/* take first format from list of supported formats */
+			if (encoder->pix_fmts)
+				enc_ctx->pix_fmt = encoder->pix_fmts[0];
+			else
+				enc_ctx->pix_fmt = dec_ctx->pix_fmt;
+			/* video time_base can be set to whatever is handy and supported by encoder */
+			enc_ctx->time_base = av_inv_q(dec_ctx->framerate);
 
             if (ofmt_ctx->oformat->flags & AVFMT_GLOBALHEADER)
                 enc_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
@@ -146,6 +133,46 @@ int open_output_file(const char *filename)
 
             out_stream->time_base = enc_ctx->time_base;
             stream_ctx[i].enc_ctx = enc_ctx;
+
+		  } else if(dec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+			  encoder = avcodec_find_encoder(enc_audio_codec_id);
+            if (!encoder) {
+                av_log(NULL, AV_LOG_FATAL, "Necessary encoder not found\n");
+                return AVERROR_INVALIDDATA;
+            }
+            enc_ctx = avcodec_alloc_context3(encoder);
+            if (!enc_ctx) {
+                av_log(NULL, AV_LOG_FATAL, "Failed to allocate the encoder context\n");
+                return AVERROR(ENOMEM);
+            }
+
+			enc_ctx->thread_count = 1; // Force The Encoder to only use one thread
+
+			enc_ctx->sample_rate = dec_ctx->sample_rate;
+                enc_ctx->channel_layout = dec_ctx->channel_layout;
+                enc_ctx->channels = av_get_channel_layout_nb_channels(enc_ctx->channel_layout);
+                /* take first format from list of supported formats */
+                enc_ctx->sample_fmt = encoder->sample_fmts[0];
+                enc_ctx->time_base = (AVRational){1, enc_ctx->sample_rate};
+
+				 if (ofmt_ctx->oformat->flags & AVFMT_GLOBALHEADER)
+                enc_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+
+            /* Third parameter can be used to pass settings to encoder */
+            ret = avcodec_open2(enc_ctx, encoder, NULL);
+            if (ret < 0) {
+                av_log(NULL, AV_LOG_ERROR, "Cannot open video encoder for stream #%u\n", i);
+                return ret;
+            }
+            ret = avcodec_parameters_from_context(out_stream->codecpar, enc_ctx);
+            if (ret < 0) {
+                av_log(NULL, AV_LOG_ERROR, "Failed to copy encoder parameters to output stream #%u\n", i);
+                return ret;
+            }
+
+            out_stream->time_base = enc_ctx->time_base;
+            stream_ctx[i].enc_ctx = enc_ctx;
+
         } else if (dec_ctx->codec_type == AVMEDIA_TYPE_UNKNOWN) {
             av_log(NULL, AV_LOG_FATAL, "Elementary stream #%d is of unknown type, cannot proceed\n", i);
             return AVERROR_INVALIDDATA;
