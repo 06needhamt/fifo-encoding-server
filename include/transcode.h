@@ -9,9 +9,6 @@
 #include <libavutil/opt.h>
 #include <libavutil/pixdesc.h>
 
- AVFormatContext *ifmt_ctx;
- AVFormatContext *ofmt_ctx;
-
 typedef struct FilteringContext {
     AVFilterContext *buffersink_ctx;
     AVFilterContext *buffersrc_ctx;

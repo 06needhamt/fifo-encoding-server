@@ -1,5 +1,8 @@
 #include <transcode.h>
 
+ __thread AVFormatContext *ifmt_ctx;
+ __thread AVFormatContext *ofmt_ctx;
+
 int open_input_file(const char *filename)
 {
     int ret;

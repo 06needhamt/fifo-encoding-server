@@ -65,7 +65,7 @@ namespace Tester
                     Console.WriteLine(string.Format("Error Posting File {0} to server", file));
                     continue;
                 }
-                Thread.Sleep(15000);
+                Thread.Sleep(5000);
             }
 
             Console.ReadKey();
