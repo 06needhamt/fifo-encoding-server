@@ -15,14 +15,18 @@ typedef struct FilteringContext {
     AVFilterGraph *filter_graph;
 } FilteringContext;
 
- FilteringContext *filter_ctx;
-
 typedef struct StreamContext {
     AVCodecContext *dec_ctx;
     AVCodecContext *enc_ctx;
 } StreamContext;
 
- StreamContext *stream_ctx;
+
+typedef struct TranscodingContext {
+ __thread AVFormatContext *ifmt_ctx;
+ __thread AVFormatContext *ofmt_ctx;
+ __thread FilteringContext *filter_ctx;
+ __thread StreamContext *stream_ctx;
+} TranscodingContext;
 
  static enum AVCodecID enc_video_codec_id = AV_CODEC_ID_H264;
  static enum AVCodecID enc_audio_codec_id = AV_CODEC_ID_AAC;
