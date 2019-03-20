@@ -9,6 +9,9 @@
 #include <libavutil/opt.h>
 #include <libavutil/pixdesc.h>
 
+ enum AVCodecID enc_video_codec_id = AV_CODEC_ID_H264;
+ enum AVCodecID enc_audio_codec_id = AV_CODEC_ID_AAC;
+
 typedef struct FilteringContext {
     AVFilterContext *buffersink_ctx;
     AVFilterContext *buffersrc_ctx;
@@ -20,16 +23,16 @@ typedef struct StreamContext {
     AVCodecContext *enc_ctx;
 } StreamContext;
 
+typedef struct FormatContext {
+	AVFormatContext *ifmt_ctx;
+	AVFormatContext *ofmt_ctx;
+} FormatContext;
 
 typedef struct TranscodingContext {
- __thread AVFormatContext *ifmt_ctx;
- __thread AVFormatContext *ofmt_ctx;
- __thread FilteringContext *filter_ctx;
- __thread StreamContext *stream_ctx;
+	FormatContext * format_ctx;
+	FilteringContext *filter_ctx;
+	StreamContext *stream_ctx;
 } TranscodingContext;
-
- static enum AVCodecID enc_video_codec_id = AV_CODEC_ID_H264;
- static enum AVCodecID enc_audio_codec_id = AV_CODEC_ID_AAC;
 
  int open_input_file(const char *filename);
  int open_output_file(const char *filename);

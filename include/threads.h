@@ -5,11 +5,13 @@
 
 #include <guid.h>
 #include <queue_item.h>
+#include <transcode.h>
 
 typedef struct thread {
     pthread_t handle;
     guid_t id;
     queue_item_t* item;
+	TranscodingContext* transcode_ctx;
     int busy;
 } thread_t;
 
