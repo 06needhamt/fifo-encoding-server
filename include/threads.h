@@ -7,11 +7,16 @@
 #include <queue_item.h>
 #include <transcode.h>
 
+typedef struct thread_data {
+	int tid;
+	TranscodingContext* tra_ctx;
+} thread_data_t;
+
 typedef struct thread {
     pthread_t handle;
     guid_t id;
     queue_item_t* item;
-	TranscodingContext* transcode_ctx;
+	thread_data_t* data;
     int busy;
 } thread_t;
 
@@ -29,6 +34,7 @@ extern int unpark();
 extern void* poll_thread();
 
 int create_thread_pool(int count, thread_pool_t* out);
+int create_thread_data(int tid, thread_data_t* out);
 int create_thread(queue_item_t* item, thread_t* out, thread_pool_t* pool);
 int destroy_thread(thread_t* in, thread_pool_t* pool);
 int destroy_thread_pool(thread_pool_t* in);

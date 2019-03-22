@@ -9,8 +9,8 @@
 #include <libavutil/opt.h>
 #include <libavutil/pixdesc.h>
 
- enum AVCodecID enc_video_codec_id = AV_CODEC_ID_H264;
- enum AVCodecID enc_audio_codec_id = AV_CODEC_ID_AAC;
+ static enum AVCodecID enc_video_codec_id = AV_CODEC_ID_H264;
+ static enum AVCodecID enc_audio_codec_id = AV_CODEC_ID_AAC;
 
 typedef struct FilteringContext {
     AVFilterContext *buffersink_ctx;
@@ -34,12 +34,12 @@ typedef struct TranscodingContext {
 	StreamContext *stream_ctx;
 } TranscodingContext;
 
- int open_input_file(const char *filename);
- int open_output_file(const char *filename);
+ int open_input_file(const char *filename, TranscodingContext* tra_ctx);
+ int open_output_file(const char *filename, TranscodingContext* tra_ctx);
  int init_filter(FilteringContext* fctx, AVCodecContext *dec_ctx,
-        AVCodecContext *enc_ctx, const char *filter_spec);
- int init_filters(void);
- int encode_write_frame(AVFrame *filt_frame, unsigned int stream_index, int *got_frame);
- int filter_encode_write_frame(AVFrame *frame, unsigned int stream_index);
- int flush_encoder(unsigned int stream_index);
-int transcode_video(char* input_file, char* outputFile);
+        AVCodecContext *enc_ctx, const char *filter_spec, TranscodingContext* tra_ctx);
+ int init_filters(TranscodingContext* tra_ctx);
+ int encode_write_frame(AVFrame *filt_frame, unsigned int stream_index, int *got_frame, TranscodingContext* tra_ctx);
+ int filter_encode_write_frame(AVFrame *frame, unsigned int stream_index, TranscodingContext* tra_ctx);
+ int flush_encoder(unsigned int stream_index, TranscodingContext* tra_ctx);
+int transcode_video(char* input_file, char* outputFile, TranscodingContext* tra_ctx);

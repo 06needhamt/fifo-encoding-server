@@ -15,6 +15,7 @@
 #include <queue_item.h>
 #include <threads.h>
 #include <io.h>
+#include <transcode.h>
 
 extern queue_t* current_queue;
 extern queue_item_t current_item; 
@@ -28,5 +29,5 @@ char* log_file_path;
 
 int MAX_THREADS;
 
-void* poll_thread(int tid);
+void* poll_thread(thread_data_t** data);
 

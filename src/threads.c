@@ -8,7 +8,13 @@ int create_thread_pool(int count, thread_pool_t* out) {
     out->busy_count = 0;
 
     for(int i = 0; i < count; i++) {
-        int err = pthread_create(&(out->pool[i].handle), NULL, &poll_thread, i);
+		out->pool[i].data = (thread_data_t*) malloc(sizeof(thread_data_t));
+		int err = create_thread_data(i, out->pool[i].data);
+		if (err != 0) {
+		    printf("can't create thread data \n");
+		    return 0;
+	    }
+        err = pthread_create(&(out->pool[i].handle), NULL, &poll_thread, &out->pool[i].data);
         if (err != 0) {
 		    printf("can't create thread :[%s] \n", strerror(err));
 		    return 0;
@@ -31,4 +37,11 @@ int destroy_thread_pool(thread_pool_t* in) {
     }
     free(in);
     return 1;
+}
+
+int create_thread_data(int tid, thread_data_t* out) {
+	out->tid = tid;
+	out->tra_ctx = (TranscodingContext*) malloc(sizeof(TranscodingContext));
+
+	return 0;
 }

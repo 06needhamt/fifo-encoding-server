@@ -1,15 +1,14 @@
 #include <queue_item.h>
-#include <transcode.h>
 
-int start_item(queue_item_t* item) {
+int start_item(queue_item_t* item, TranscodingContext* tra_ctx) {
     printf("Item Process Startng ... \n ");
     if(strcmp(item->command, "Transcode") == 0 && item ->item_type == 1)
-        return transcode_video(item->input_file_name, item->output_file_name);
+        return transcode_video(item->input_file_name, item->output_file_name, tra_ctx);
 
     return -1;
 }
 
-int abort_item(queue_item_t* item) {
+int abort_item(queue_item_t* item, TranscodingContext* tra_ctx) {
     return 0;
 }
 
