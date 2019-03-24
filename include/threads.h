@@ -10,12 +10,12 @@
 typedef struct thread_data {
 	int tid;
 	TranscodingContext* tra_ctx;
+	queue_item_t* item;
 } thread_data_t;
 
 typedef struct thread {
     pthread_t handle;
     guid_t id;
-    queue_item_t* item;
 	thread_data_t* data;
     int busy;
 } thread_t;

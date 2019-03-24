@@ -1,5 +1,5 @@
 CC		 := gcc
-C_FLAGS  := -Wall -g -pedantic -std=c99 -pthread -D_GNU_SOURCE
+C_FLAGS  := -g -pedantic -std=c99 -pthread -D_GNU_SOURCE
 AS		 := as
 AS_FLAGS := -g
 

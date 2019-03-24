@@ -67,9 +67,6 @@ namespace Tester
                 }
                 Thread.Sleep(5000);
             }
-
-            Console.ReadKey();
-
         }
 
         static bool DoHttpGetRequest(string url, out string content)

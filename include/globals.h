@@ -18,7 +18,6 @@
 #include <transcode.h>
 
 extern queue_t* current_queue;
-extern queue_item_t current_item; 
 extern thread_pool_t* current_pool;
 
 extern FILE* log_file;
@@ -27,7 +26,9 @@ extern FILE* data_file;
 char* data_file_path;
 char* log_file_path;
 
+static bool isPolling = false;
+
 int MAX_THREADS;
 
-void* poll_thread(thread_data_t** data);
+void* poll_thread(thread_data_t* data);
 
