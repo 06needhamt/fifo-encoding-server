@@ -22,3 +22,12 @@ make -j$CORES
 sudo make install
 
 cd $WORKING_DIR
+wget https://www.openssl.org/source/openssl-1.0.2r.tar.gz
+tar xvf openssl-1.0.2r.tar.gz
+cd openssl-1.0.2r
+./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+make -j$CORES
+make test
+sudo make install
+
+cd $WORKING_DIR
