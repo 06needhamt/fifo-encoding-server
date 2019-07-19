@@ -102,8 +102,8 @@ PATH="$WORKING_DIR/bin:$PATH" make -j"$CORES" && \
 make install;
 
 cd $WORKING_DIR/ffmpeg_sources && \
-wget -O ffmpeg-4.1.1.tar.bz2 https://ffmpeg.org/releases/ffmpeg-4.1.1.tar.bz2 && \
-tar xjvf ffmpeg-4.1.1.tar.bz2 && \
+wget -O ffmpeg-4.1.4.tar.bz2 https://ffmpeg.org/releases/ffmpeg-4.1.4.tar.bz2 && \
+tar xjvf ffmpeg-4.1.4.tar.bz2 && \
 cd ffmpeg && \
 PATH="$WORKING_DIR/bin:$PATH" PKG_CONFIG_PATH="$WORKING_DIR/ffmpeg_build/lib/pkgconfig" ./configure \
   --prefix="$WORKING_DIR/ffmpeg_build" \
