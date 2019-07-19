@@ -13,11 +13,11 @@ INCLUDE	:= -Iinclude
 LIB		:= -Llib
 OBJ 	:= obj
 
-LIBRARIES	:= -lwebsockets -lpthread -ljansson -lavcodec -lavformat -lavfilter -lavutil -lmicrohttpd -L/usr/local/lib -Ldeps/libwebsockets/build/lib/
+LIBRARIES	:= -lwebsockets -lpthread -ljansson -lavcodec -lavformat -lavfilter -lavutil -lmicrohttpd -L/usr/local/lib -Ldeps/libwebsockets/build/lib/ -Ldeps/bin
 
 EXECUTABLE	:= fifoserver
 
-all: $(BIN)/$(EXECUTABLE)
+all: $(BIN)/$(EXECUTABLE) 
 
 clean:
 	-$(RM) -rf $(BIN)/$(EXECUTABLE)
