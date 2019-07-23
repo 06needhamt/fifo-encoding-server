@@ -34,7 +34,8 @@ int pre_start_tests(void);
 int live_test(void);
 int create_and_allocate_thread_pool(void);
 int create_and_allocate_queue(void);
-int create_and_open_files(const char* directory, const char* log_path, const char* data_path);
+int create_and_open_data_file(const char* directory, const char* data_path);
+int create_and_open_log_file(const char* directory, const char* log_path);
 int cleanup_memory(void);
 
 void* main_status;
@@ -201,25 +202,15 @@ int create_and_allocate_queue() {
 	return true;
 }
 
-int create_and_open_files(const char* directory, const char* log_path, const char* data_path){
+int create_and_open_data_file(const char* directory, const char* data_path){
 	struct stat st = {0};
-	char l_path[255];
 	char d_path[255];
 
-	log_file_path = malloc(255);
 	data_file_path = malloc(255);
 	
 	if (stat(directory, &st) == -1) {
 		mkdir(directory, 0755);
 	}
-
-	strcpy(l_path, directory);
-	strcat(l_path, log_path);
-	printf("log_path %s \n", l_path);
-
-	strcpy(log_file_path, l_path);
-
-	log_file = fopen(l_path, "wb");
 
 	strcpy(d_path, directory);
 	strcat(d_path, data_path);
@@ -247,6 +238,39 @@ int create_and_open_files(const char* directory, const char* log_path, const cha
 	}
 
 	data_file = fopen(d_path, "wb");
+
+	return true;
+}
+
+int create_and_open_log_file(const char* directory, const char* log_path){
+	struct stat st = {0};
+	char l_path[255];
+
+	log_file_path = malloc(255);
+	
+	if (stat(directory, &st) == -1) {
+		mkdir(directory, 0755);
+	}
+
+	strcpy(l_path, directory);
+	strcat(l_path, log_path);
+	printf("log_path %s \n", l_path);
+
+	strcpy(log_file_path, l_path);
+
+	log_file = fopen(l_path, "rb");
+	
+	if(log_file) {
+		long size = 0L;
+		fseek (log_file, 0, SEEK_END);
+		size = ftell(log_file);
+
+		if (size == 0) {
+			printf("Log file is empty \n");
+		}
+	}
+
+	log_file = fopen(l_path, "wb");
 
 	return true;
 }
