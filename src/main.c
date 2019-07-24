@@ -89,7 +89,10 @@ void* start_httpd_server(void* ptr) {
 void* start_main_thread(void* ptr) {
 	printf("Starting Main Thread... \n");
 
-	if(!create_and_open_files("data/", "fifoserver.log", "data.json"))
+	if(!create_and_open_log_file("data/", "fifoserver.log"))
+		return (void*) false;
+
+	if(!create_and_open_data_file("data/", "data.json"))
 		return (void*) false;
 
 	printf("Running Pre Start Tests \n");
